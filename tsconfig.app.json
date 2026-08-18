@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+
+    "composite": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Strictness. `strict` is the baseline; the flags below are the ones that
+       actually caught bugs in the original implementation. */
+    "strict": true,
+
+    /* The original indexed sorted arrays directly to compute quartiles
+       (`values[Math.floor(values.length * 0.25)]`), which returns undefined on
+       an empty cohort and silently produced NaN downstream. This flag makes
+       every such access a compile error until it is guarded. */
+    "noUncheckedIndexedAccess": true,
+
+    /* Distinguishes "absent" from "explicitly undefined". Matters because the
+       case schema models missing lab values as `number | null`, and we never
+       want an optional prop to quietly stand in for a real null. */
+    "exactOptionalPropertyTypes": true,
+
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
