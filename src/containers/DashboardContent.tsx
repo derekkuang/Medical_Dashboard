@@ -10,11 +10,11 @@ import { ChartCard } from '@/components/ChartCard';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingState } from '@/components/LoadingState';
+import { AgeHistogramPanel } from './AgeHistogramPanel';
 import { FilterToolbar } from './FilterToolbar';
 
-/** Panels in the order they will be built. Placeholders until each lands. */
+/** Panels still to be built. Placeholders until each lands. */
 const PLANNED_PANELS = [
-  { title: 'Age distribution', subtitle: 'Histogram with brushable range selection' },
   { title: 'Departments', subtitle: 'Case counts, click a bar to filter' },
   { title: 'Procedure phases', subtitle: 'Anaesthesia and operation intervals' },
   { title: 'Pre-operative albumin', subtitle: 'Binned means against ICU stay' },
@@ -63,6 +63,7 @@ export function DashboardContent(): ReactElement {
         />
       ) : (
         <DashboardGrid>
+          <AgeHistogramPanel allCases={cases} matchedCases={matched} />
           {PLANNED_PANELS.map((panel) => (
             <ChartCard key={panel.title} title={panel.title} subtitle={panel.subtitle}>
               <EmptyState

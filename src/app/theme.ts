@@ -1,25 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-/**
- * Dark slate palette, carried over from the original so the rebuild is
- * recognisably the same product.
- *
- * Chart colours are declared here rather than inside chart components. Charts
- * receive them as props, which keeps those components free of theme lookups
- * and means a palette change is one edit rather than seven.
- */
-export const chartPalette = {
-  // Categorical. Chosen to stay distinguishable under the common forms of
-  // colour vision deficiency, which ruled out the original's red/green pairing.
-  categorical: ['#60a5fa', '#f472b6', '#34d399', '#fbbf24', '#a78bfa', '#22d3ee'],
-  // Ordinal severity. Used only where an ordering genuinely exists.
-  severity: { low: '#34d399', medium: '#fbbf24', high: '#f87171' },
-  grid: '#334155',
-  axis: '#94a3b8',
-  // Marks representing an estimate too uncertain to read as a point value.
-  uncertain: '#64748b',
-} as const;
-
 export const theme = createTheme({
   palette: {
     mode: 'dark',

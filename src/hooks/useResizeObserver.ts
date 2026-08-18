@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 
 export interface Size {
   width: number;
@@ -16,8 +16,10 @@ export interface Size {
  * Returns 0 until the first observation. Callers must treat that as "not yet
  * measured" and skip rendering rather than build a scale over a zero range.
  */
-export function useResizeObserver<T extends Element>(): [React.RefObject<T | null>, Size] {
-  const ref = useRef<T | null>(null);
+export function useResizeObserver<T extends Element>(): [RefObject<T>, Size] {
+  // useRef<T>(null), not useRef<T | null>(null): React 18 types only accept the
+  // former where a DOM `ref` prop is expected.
+  const ref = useRef<T>(null);
   const [size, setSize] = useState<Size>({ width: 0, height: 0 });
 
   useEffect(() => {
