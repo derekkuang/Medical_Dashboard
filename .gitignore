@@ -1,0 +1,23 @@
+node_modules/
+dist/
+coverage/
+
+# Vite / TS build artifacts
+*.tsbuildinfo
+.vite/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local env overrides
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
