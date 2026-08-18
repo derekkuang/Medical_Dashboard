@@ -14,10 +14,10 @@ Scaffolding in progress. See `docs/decisions/` for architecture decision records
 
 ## Data
 
-| Source | Shape |
-| --- | --- |
-| `public/cases.csv` | 6,388 rows x 74 columns — one row per surgical case |
-| `api.vitaldb.net/trks` | 486,449 waveform track descriptors across those cases |
+| Source                  | Shape                                                   |
+| ----------------------- | ------------------------------------------------------- |
+| `public/cases.csv`      | 6,388 rows x 74 columns — one row per surgical case     |
+| `api.vitaldb.net/trks`  | 486,449 waveform track descriptors across those cases   |
 | `api.vitaldb.net/{tid}` | Per-track time series, `Time,<value>`, 0.5 Hz to 500 Hz |
 
 The VitalDB API sends `Access-Control-Allow-Origin: *` and honours HTTP range

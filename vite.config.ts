@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -15,5 +16,25 @@ export default defineConfig({
     // fires, so this is tightened rather than silenced.
     chunkSizeWarningLimit: 600,
     sourcemap: true,
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    css: false,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      // Coverage weight belongs on the pure layers. Charts are covered by
+      // render tests, but thresholds there would reward asserting on SVG
+      // internals, which is exactly the brittle test this design avoids.
+      include: ['src/transforms/**', 'src/telemetry/**', 'src/data/**'],
+      thresholds: {
+        statements: 80,
+        branches: 75,
+        functions: 80,
+        lines: 80,
+      },
+    },
   },
 });
