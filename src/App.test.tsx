@@ -1,13 +1,22 @@
+import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
 import { App } from './App';
 
-// Smoke test. Its job is to prove the test harness itself works — jsdom, the
-// React 18 renderer and jest-dom matchers — before any real component depends
-// on it. Queried by role rather than text so it survives copy changes.
+const realFetch = globalThis.fetch;
+
+afterEach(() => {
+  globalThis.fetch = realFetch;
+});
+
+// Smoke test for the composition root: providers, theme and shell wired
+// together. Behaviour is covered against DashboardContent, which can be given
+// an isolated store; App deliberately owns the singleton.
 describe('App', () => {
   it('renders the application shell', () => {
+    globalThis.fetch = () => Promise.resolve(new Response('caseid\n1', { status: 200 }));
+
     render(<App />);
+
     expect(screen.getByRole('heading', { name: /vitals unveiled/i })).toBeInTheDocument();
   });
 });
