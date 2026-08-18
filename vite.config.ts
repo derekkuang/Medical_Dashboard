@@ -29,6 +29,9 @@ export default defineConfig({
       // render tests, but thresholds there would reward asserting on SVG
       // internals, which is exactly the brittle test this design avoids.
       include: ['src/transforms/**', 'src/telemetry/**', 'src/data/**'],
+      // Type-only modules compile to nothing, so they report 0% with no
+      // statements to cover. Listing them would make the report read as a gap.
+      exclude: ['**/schema.ts'],
       thresholds: {
         statements: 80,
         branches: 75,
