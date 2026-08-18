@@ -4,6 +4,7 @@ import { useGetCasesQuery } from '@/data/casesApi';
 import { allFiltersCleared } from '@/features/filters/filtersSlice';
 import { selectFilters, selectHasActiveFilters } from '@/features/filters/selectors';
 import { filterCases } from '@/transforms/filterCases';
+import { useUrlSyncedFilters } from '@/hooks/useUrlSyncedFilters';
 import { DashboardGrid } from '@/components/AppShell';
 import { ChartCard } from '@/components/ChartCard';
 import { EmptyState } from '@/components/EmptyState';
@@ -20,6 +21,8 @@ const PLANNED_PANELS = [
 ] as const;
 
 export function DashboardContent(): ReactElement {
+  useUrlSyncedFilters();
+
   const dispatch = useAppDispatch();
   const { data, isLoading, isError, error, refetch } = useGetCasesQuery();
   const filters = useAppSelector(selectFilters);

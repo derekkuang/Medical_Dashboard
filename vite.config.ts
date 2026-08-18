@@ -33,7 +33,14 @@ export default defineConfig({
       // Coverage weight belongs on the pure layers. Charts are covered by
       // render tests, but thresholds there would reward asserting on SVG
       // internals, which is exactly the brittle test this design avoids.
-      include: ['src/transforms/**', 'src/telemetry/**', 'src/data/**'],
+      include: [
+        'src/transforms/**',
+        'src/telemetry/**',
+        'src/data/**',
+        // Slices and URL codecs are logic, not presentation, and are covered
+        // to the same standard as the pure layers.
+        'src/features/**',
+      ],
       // Type-only modules compile to nothing, so they report 0% with no
       // statements to cover. Listing them would make the report read as a gap.
       exclude: ['**/schema.ts'],

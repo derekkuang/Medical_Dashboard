@@ -17,6 +17,9 @@ const realFetch = globalThis.fetch;
 
 afterEach(() => {
   globalThis.fetch = realFetch;
+  // The URL is real global state in jsdom; leaving a query string behind would
+  // hydrate the next test's filters.
+  window.history.replaceState(null, '', '/');
   vi.restoreAllMocks();
 });
 
@@ -75,6 +78,43 @@ describe('DashboardContent', () => {
     // The empty state must be an exit, not a dead end.
     await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
     expect(await screen.findByText(/of 4 cases/)).toHaveTextContent('4');
+  });
+
+  it('puts the selection in the address bar so the view can be shared', async () => {
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+    await screen.findByText(/of 4 cases/);
+
+    expect(window.location.search).toBe('');
+
+    await userEvent.click(screen.getByLabelText('Department'));
+    await userEvent.click(screen.getByRole('option', { name: /Urology/ }));
+
+    await waitFor(() => {
+      expect(window.location.search).toBe('?dept=Urology');
+    });
+  });
+
+  it('restores the selection from a shared link on load', async () => {
+    // The other half of the round trip: a pasted URL must reproduce the cohort.
+    window.history.replaceState(null, '', '/?dept=Gynecology');
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+
+    expect(await screen.findByText(/of 4 cases/)).toHaveTextContent('1');
+  });
+
+  it('clears the query string when filters are cleared', async () => {
+    window.history.replaceState(null, '', '/?dept=Urology');
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+    await screen.findByText(/of 4 cases/);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Clear' }));
+
+    await waitFor(() => {
+      expect(window.location.search).toBe('');
+    });
   });
 
   it('keeps every department selectable after one is chosen', async () => {
