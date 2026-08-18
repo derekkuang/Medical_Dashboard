@@ -1,15 +1,35 @@
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { Provider } from 'react-redux';
 import type { ReactElement } from 'react';
+import { store } from './app/store';
+import { theme } from './app/theme';
+import { AppShell, DashboardGrid } from './components/AppShell';
+import { ChartCard } from './components/ChartCard';
+import { EmptyState } from './components/EmptyState';
 
-/**
- * Placeholder shell. Deliberately empty of features: the scaffold, CI pipeline
- * and container image are proven green before any visualisation exists, so that
- * a later red build points at the feature rather than the plumbing.
- */
+/** Panels in the order they will be built. Placeholders until each lands. */
+const PLANNED_PANELS = [
+  { title: 'Age distribution', subtitle: 'Histogram with brushable range selection' },
+  { title: 'Departments', subtitle: 'Case counts, click a bar to filter' },
+  { title: 'Procedure phases', subtitle: 'Anaesthesia and operation intervals' },
+  { title: 'Pre-operative albumin', subtitle: 'Binned means against ICU stay' },
+] as const;
+
 export function App(): ReactElement {
   return (
-    <main>
-      <h1>Vitals Unveiled</h1>
-      <p>Scaffold is up. No features yet.</p>
-    </main>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AppShell>
+          <DashboardGrid>
+            {PLANNED_PANELS.map((panel) => (
+              <ChartCard key={panel.title} title={panel.title} subtitle={panel.subtitle}>
+                <EmptyState title="Not built yet" description="This panel arrives in phase C." />
+              </ChartCard>
+            ))}
+          </DashboardGrid>
+        </AppShell>
+      </ThemeProvider>
+    </Provider>
   );
 }

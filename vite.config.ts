@@ -10,6 +10,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    // Without this, running the coverage reporter while the dev server is up
+    // rewrites coverage/lcov-report and triggers a full page reload each time.
+    watch: { ignored: ['**/coverage/**', '**/dist/**'] },
+  },
   build: {
     // Surfaced deliberately: the telemetry work will add a canvas renderer and
     // MUI is large. A budget that warns early is worth more than one that never
