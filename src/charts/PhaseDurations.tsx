@@ -2,6 +2,7 @@ import { useMemo, type ReactElement } from 'react';
 import { scaleBand, scaleLinear } from 'd3-scale';
 import type { PhaseRow } from '@/transforms/phases';
 import { ChartFrame } from './primitives/ChartFrame';
+import { fitLabel, fitMargin } from './primitives/geometry';
 import { AxisBottom } from './primitives/Axis';
 import { Grid } from './primitives/Grid';
 import { linearTicks } from './primitives/ticks';
@@ -36,12 +37,17 @@ export function PhaseDurations({
     <ChartFrame
       width={width}
       height={height}
-      margin={MARGIN}
+      margin={fitMargin(width, MARGIN)}
       title={`${phaseLabel} by procedure`}
       description={description}
     >
       {({ innerWidth, innerHeight }) => (
-        <Body rows={rows} innerWidth={innerWidth} innerHeight={innerHeight} />
+        <Body
+          rows={rows}
+          innerWidth={innerWidth}
+          innerHeight={innerHeight}
+          labelWidth={fitMargin(width, MARGIN).left}
+        />
       )}
     </ChartFrame>
   );
@@ -51,10 +57,12 @@ function Body({
   rows,
   innerWidth,
   innerHeight,
+  labelWidth,
 }: {
   rows: readonly PhaseRow[];
   innerWidth: number;
   innerHeight: number;
+  labelWidth: number;
 }): ReactElement {
   const maxValue = useMemo(() => Math.max(10, ...rows.map((r) => r.summary?.q3 ?? 0)), [rows]);
 
@@ -110,7 +118,7 @@ function Body({
               fill={isAll ? chartPalette.highlight : chartPalette.axis}
               fontWeight={isAll ? 600 : 400}
             >
-              {row.label}
+              {fitLabel(row.label, labelWidth - 14)}
             </text>
 
             {row.summary === null ? (

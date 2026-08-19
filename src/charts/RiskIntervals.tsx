@@ -3,6 +3,7 @@ import { scaleBand, scaleLinear } from 'd3-scale';
 import type { RiskRow } from '@/transforms/risk';
 import type { ProportionEstimate } from '@/transforms/stats';
 import { ChartFrame } from './primitives/ChartFrame';
+import { fitLabel, fitMargin } from './primitives/geometry';
 import { AxisBottom } from './primitives/Axis';
 import { Grid } from './primitives/Grid';
 import { linearTicks } from './primitives/ticks';
@@ -43,12 +44,17 @@ export function RiskIntervals({
     <ChartFrame
       width={width}
       height={height}
-      margin={MARGIN}
+      margin={fitMargin(width, MARGIN)}
       title="In-hospital mortality by risk factor"
       description={description}
     >
       {({ innerWidth, innerHeight }) => (
-        <Body rows={rows} innerWidth={innerWidth} innerHeight={innerHeight} />
+        <Body
+          rows={rows}
+          innerWidth={innerWidth}
+          innerHeight={innerHeight}
+          labelWidth={fitMargin(width, MARGIN).left}
+        />
       )}
     </ChartFrame>
   );
@@ -58,10 +64,12 @@ function Body({
   rows,
   innerWidth,
   innerHeight,
+  labelWidth,
 }: {
   rows: readonly RiskChartRow[];
   innerWidth: number;
   innerHeight: number;
+  labelWidth: number;
 }): ReactElement {
   // Domain spans the widest upper bound, not the largest point estimate:
   // clipping a whisker would hide exactly the uncertainty this chart exists to
@@ -124,7 +132,9 @@ function Body({
               fill={row.isCombination ? chartPalette.highlight : chartPalette.axis}
               fontWeight={row.isCombination ? 600 : 400}
             >
-              {row.label}
+              {/* Truncated to the margin actually available, which shrinks on
+                  narrow screens. The full text stays in the row's title. */}
+              {fitLabel(row.label, labelWidth - 14)}
             </text>
 
             {row.estimate === null ? (

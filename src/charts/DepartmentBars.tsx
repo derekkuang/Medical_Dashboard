@@ -2,6 +2,7 @@ import { useMemo, type KeyboardEvent, type ReactElement } from 'react';
 import { scaleBand, scaleLinear } from 'd3-scale';
 import type { DepartmentBar } from '@/transforms/departments';
 import { ChartFrame } from './primitives/ChartFrame';
+import { fitLabel, fitMargin } from './primitives/geometry';
 import { AxisBottom } from './primitives/Axis';
 import { Grid } from './primitives/Grid';
 import { linearTicks } from './primitives/ticks';
@@ -42,7 +43,7 @@ export function DepartmentBars({
     <ChartFrame
       width={width}
       height={height}
-      margin={MARGIN}
+      margin={fitMargin(width, MARGIN)}
       title="Cases by department"
       description={description}
       role="group"
@@ -55,6 +56,7 @@ export function DepartmentBars({
           onSelect={onSelect}
           innerWidth={innerWidth}
           innerHeight={innerHeight}
+          labelWidth={fitMargin(width, MARGIN).left}
         />
       )}
     </ChartFrame>
@@ -68,6 +70,7 @@ interface BodyProps {
   onSelect: (department: string) => void;
   innerWidth: number;
   innerHeight: number;
+  labelWidth: number;
 }
 
 function Body({
@@ -77,6 +80,7 @@ function Body({
   onSelect,
   innerWidth,
   innerHeight,
+  labelWidth,
 }: BodyProps): ReactElement {
   const x = useMemo(
     () =>
@@ -174,7 +178,9 @@ function Body({
               fontWeight={isSelected ? 600 : 400}
               pointerEvents="none"
             >
-              {bar.department}
+              {/* The full name stays in the button's aria-label, so truncating
+                  here costs a pointer user nothing and a screen reader nothing. */}
+              {fitLabel(bar.department, labelWidth - 12)}
             </text>
 
             <text
