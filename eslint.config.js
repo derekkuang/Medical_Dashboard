@@ -95,6 +95,16 @@ export default tseslint.config(
 
       // The brief is explicit: no `any`.
       '@typescript-eslint/no-explicit-any': 'error',
+
+      // A leading underscore marks a parameter that exists to satisfy a
+      // signature rather than to be used — an interface method whose
+      // implementation genuinely ignores an argument. Without this, the only
+      // way to silence it is to delete the parameter, which breaks the
+      // signature the interface requires.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
