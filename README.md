@@ -15,7 +15,7 @@ corrections are the most interesting thing in the repository and are documented 
 npm install
 npm run dev            # http://localhost:5173
 
-npm test               # 235 tests
+npm test               # 368 tests
 npm run test:coverage  # thresholds enforced on the logic layers
 npm run lint           # includes the architecture boundary rules
 npm run typecheck
@@ -174,7 +174,7 @@ anaesthesia to incision and transplantation ~70. The data gives 33.9 and 69.7. T
 
 ## Testing
 
-235 tests. Coverage thresholds apply to `transforms/`, `telemetry/`, `data/` and `features/` —
+368 tests. Coverage thresholds apply to `transforms/`, `telemetry/`, `data/` and `features/` —
 the layers that carry logic. Charts get render tests with fixture props; thresholds there would
 reward asserting on SVG internals, which is the brittle test this design exists to avoid.
 
@@ -184,19 +184,47 @@ those fail loudly instead of quietly changing every number on the dashboard.
 
 ## Accessibility
 
-Built in, not retrofitted. Every panel is a landmark region labelled by its own heading. Charts
+Built in, not retrofitted, and audited by a test that runs over the whole rendered dashboard —
+so a future panel shipping an unlabelled control fails CI rather than quietly eroding the work.
+
+Every panel is a landmark region labelled by its own heading. Charts
 are `role="img"` with a description carrying the actual finding — one accurate sentence serves a
 screen reader better than forty unlabelled rects — and charts with real controls opt into
 `role="group"` so their children stay reachable. Department bars are true buttons: tabbable,
 Enter and Space, `aria-pressed`. `d3-brush` has no keyboard affordance at all, so the age filter
 is paired with a range slider that writes the same state, and an integration test drives that
-filter entirely from the keyboard.
+filter entirely from the keyboard. Reduced motion is honoured globally; nothing here conveys
+meaning through movement. Each telemetry trace carries a live numeric readout, which is the
+accommodation a canvas actually needs — a picture of a waveform tells a screen reader nothing,
+but the current value in text tells everyone something.
+
+## Telemetry
+
+Selecting a case replays the vital signs actually recorded during that operation: heart rate,
+SpO₂, end-tidal CO₂, mean arterial pressure, anaesthetic depth, and a 500 Hz ECG, on one
+timeline at their own rates.
+
+This is not a simulation of a stream. The `Time` column is real elapsed seconds from the case
+origin, so replaying it on a clock reproduces the genuine irregular intervals, dropouts and
+missing samples — the properties synthetic data is always too clean to have. It is also how
+operator consoles are actually built: against recorded data, not a live robot.
+
+`TelemetrySource` is the seam. `VitalDBReplaySource` reads recorded tracks; `WebSocketSource`
+satisfies the same interface and is asserted to, so swapping playback for a live feed is a
+constructor change and nothing downstream can tell the difference.
+
+The transport is streaming, not ranged. VitalDB stores its objects pre-gzipped, so a byte range
+is a slice of a compressed stream and cannot be decompressed alone — `response.body` sidesteps
+that because the browser decompresses as it reads, which also lets a 61 MB waveform start
+drawing on its first chunk. Track discovery uses a build-time index
+(`scripts/build-track-index.js`) rather than shipping the upstream 30 MB catalogue to every
+visitor. Both decisions, and the measurements behind them, are in
+[docs/decisions/0001-telemetry-transport.md](docs/decisions/0001-telemetry-transport.md).
 
 ## Status
 
-Phases A–C complete: data layer, state, URL-synced filters, five working panels. Phase D
-(telemetry replay) is in progress — see
-[docs/decisions/0001-telemetry-transport.md](docs/decisions/0001-telemetry-transport.md).
+Complete: data layer, state and URL-synced filters, six analytical panels, telemetry replay,
+accessibility and responsive passes.
 
 **CI has not yet executed** — the repository's GitHub Actions are blocked by an account billing
 issue, not by the code. Every commit has been verified locally against the exact CI sequence
