@@ -12,6 +12,7 @@ import { LoadingState } from '@/components/LoadingState';
 import { AgeHistogramPanel } from './AgeHistogramPanel';
 import { DepartmentPanel } from './DepartmentPanel';
 import { AlbuminPanel } from './AlbuminPanel';
+import { CohortRadarPanel } from './CohortRadarPanel';
 import { PhasePanel } from './PhasePanel';
 import { RiskPanel } from './RiskPanel';
 import { FilterToolbar } from './FilterToolbar';
@@ -63,6 +64,7 @@ export function DashboardContent(): ReactElement {
           <RiskPanel matchedCases={matched} />
           <AlbuminPanel matchedCases={matched} />
           <PhasePanel matchedCases={matched} />
+          <CohortRadarPanel allCases={cases} />
         </DashboardGrid>
       )}
     </>
