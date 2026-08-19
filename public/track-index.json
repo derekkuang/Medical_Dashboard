@@ -1,0 +1,745 @@
+{
+  "source": "https://api.vitaldb.net/trks",
+  "generatedAt": "2026-08-19",
+  "note": "Derived at build time. See docs/decisions/0001-telemetry-transport.md.",
+  "channels": [
+    {
+      "name": "Solar8000/HR",
+      "label": "Heart rate",
+      "unit": "bpm",
+      "approximateHz": 0.5
+    },
+    {
+      "name": "Solar8000/PLETH_SPO2",
+      "label": "SpO₂",
+      "unit": "%",
+      "approximateHz": 0.5
+    },
+    {
+      "name": "Solar8000/ETCO2",
+      "label": "End-tidal CO₂",
+      "unit": "mmHg",
+      "approximateHz": 0.5
+    },
+    {
+      "name": "Solar8000/NIBP_MBP",
+      "label": "Mean arterial pressure",
+      "unit": "mmHg",
+      "approximateHz": 0.02
+    },
+    {
+      "name": "Primus/MAC",
+      "label": "Anaesthetic depth (MAC)",
+      "unit": "MAC",
+      "approximateHz": 0.5
+    },
+    {
+      "name": "SNUADC/ECG_II",
+      "label": "ECG lead II",
+      "unit": "mV",
+      "approximateHz": 500
+    }
+  ],
+  "cases": [
+    {
+      "caseId": 1,
+      "department": "General surgery",
+      "operationType": "Colorectal",
+      "isEmergency": false,
+      "tracks": [
+        "6326f61f2b89f8afb550c102fd1b9c9e44249fe0",
+        "b50ea1e4216b5c88f1b8d53c5f2c4eff2993edb6",
+        "7f6ed091a1ba1df84b74af07be980e7e86ac7465",
+        "29cef7b8fe2cc84e69fd143da510949b3c271314",
+        "bf7e8734d538292c55d4d6aba02be3cd7ac4f4e6",
+        "8c9161aaae8cb578e2aa7b60f44234d98d2b3344"
+      ]
+    },
+    {
+      "caseId": 5,
+      "department": "General surgery",
+      "operationType": "Vascular",
+      "isEmergency": true,
+      "tracks": [
+        "70bb5af22bd71a852ae47543ae12daad54090361",
+        "ae9d7d9dbe50ac304b1f49358ff89775df01b3fd",
+        "6613a1cfe2d9544d1bff469428d93eef489cf228",
+        "47068a5922d08f82b7c9eee64770aa23092feacf",
+        "da6d06284391c55915d2e35f98b64dfbc30acc31",
+        "3431cd35ca4bc15b6de13e4c49b2db56e6bc5a37"
+      ]
+    },
+    {
+      "caseId": 7,
+      "department": "Thoracic surgery",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "085164486217a84335c109c237bebe5c537e45d2",
+        "a81bc2962fc0ac48297eb856ff3710dda5c3a276",
+        "c781f338d06a9d818cb742c984f24e1ab2b509dc",
+        null,
+        "b3b48176890c2b9ec7635299192ec6ff339bc7f9",
+        "f5bdb6cceb16a2f45ad0df54d3736126d7d076bd"
+      ]
+    },
+    {
+      "caseId": 11,
+      "department": "Urology",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "f9bedb1e855f5646fedbe72e1471f26b3b0b081f",
+        "866d3f2f3d3649f1cec77b86057bc75542d69519",
+        "7734fc59fe492e0ebfe87a478a63f612a77fc898",
+        "5d2f1712028181f0ecd0894363822b850bd421f8",
+        "39f6829e6f38c39235f8dfdb225fbbadc0f6c864",
+        "172b1b7be2c10ab16dd4ec1eed0d294fd3bd23a0"
+      ]
+    },
+    {
+      "caseId": 66,
+      "department": "Gynecology",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "7b45bdb48cc89bcba0d49b530cc36130ba6fcebb",
+        "37d8b02330501cf64ffa038bd8b5174379fb7169",
+        "2bef2856882cc4eed14bb5e6afe94e86c34c4cf1",
+        "d1fc8f9f38532605194a256ab13ba329d9175d22",
+        "f7fa0989dece9f8c5b3c7d69fc9f8e9d1d3f7bee",
+        "67237246da1124d18073073de604738ef184878c"
+      ]
+    },
+    {
+      "caseId": 123,
+      "department": "Gynecology",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "937cace8e6bee7ef57bd73fed7a5339c12023802",
+        "773d8ab483b96ff7732ac2bcb33ced94311ef03b",
+        "d6fdf2cdfe976c0749fab06865333c783003b3d0",
+        "c5b1af9ae4e4201ab398caad50a58f83c1181fdc",
+        "80d50ca944bc715f4e247291eba6bf5cceb5328b",
+        "8baa7e5941deb9ff3f51716deec47a955aa6f83b"
+      ]
+    },
+    {
+      "caseId": 139,
+      "department": "Thoracic surgery",
+      "operationType": "Minor resection",
+      "isEmergency": true,
+      "tracks": [
+        "6b1d3fca8b774e3742dad439967bb1085385b1c8",
+        "c249e93f9b86c150973084c4c58dad55f8913763",
+        "602863e1c0de49ec607c57f5c047a7bbaab0a8a1",
+        "6274ce298abafc3dd6afd98480d33b534c20ce72",
+        "25391bb2da4e0d0a82b631a7285f0d679489b1eb",
+        "381478b42217056e0484a763ed29e9ecf7bf85ab"
+      ]
+    },
+    {
+      "caseId": 421,
+      "department": "Gynecology",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "8f3742b7a2fad3a195def5ff2c80856e2cb4fd14",
+        "6a414daa073752e45873a7e090d5e43f4fd75253",
+        "9f854251fcfe7a25157be54f7253028ecc784130",
+        "104c5d285dad7a0722a284f0c7e81369894590df",
+        "8f7fa45efddabb02e7cf2a2477292539a3fa89af",
+        "60d5c604f1867bfe456ac5b45ad615aaa9de73d5"
+      ]
+    },
+    {
+      "caseId": 870,
+      "department": "General surgery",
+      "operationType": "Transplantation",
+      "isEmergency": true,
+      "tracks": [
+        "a6fa7fc5ea971023147f3728582800d39d10afa8",
+        "5842897f9cf857922b53577ce554d8649f7a787e",
+        "774d94afa9df1d2058f7d4bf494cbdea1dc0de4a",
+        null,
+        "07529e40604d55370b5eb435e52bc73bc62bcc0b",
+        "5f9a1fff5b6b1016c9bddd699de873e4bcba8e89"
+      ]
+    },
+    {
+      "caseId": 881,
+      "department": "Thoracic surgery",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "82fcdfdd5646498d51db8c7968f5c754de822b25",
+        "ca223738f88f20e85d0364e809ec74af7caad35d",
+        "a0df3e82168626335021a1fa57101ed93a736602",
+        "22b644d0f8183d6ef587b5e509cbea017de01ae8",
+        "dfc33bed76b2189ad0ca0ba53f6c6743e7b70b71",
+        "194577ee2e50ef886c3405fcb51570b619a79e70"
+      ]
+    },
+    {
+      "caseId": 911,
+      "department": "General surgery",
+      "operationType": "Thyroid",
+      "isEmergency": false,
+      "tracks": [
+        "b73bcb5c4332c73a96c65c4731dfef4afd1d179b",
+        "f07dacc5f8b2d54335d93a3f82d2750d43ea66f5",
+        "06a128c836f08baace823b9dbeb09967859b85db",
+        "3d4f8fd196fc1a6bafff7511d6649190c1c6a691",
+        "a4b36045d173f60312efaf8061d4b960dea4cb1f",
+        "a7cff1a1976166331ec9b8a96181ce89596c3683"
+      ]
+    },
+    {
+      "caseId": 954,
+      "department": "Gynecology",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "5540f5adb1d398eb866dee586de70bbd8866a15a",
+        "538808b83ba142c7b4f4250239c5dc7bdb083067",
+        "f29d02e58ec8a3353c4074cc2ae698768410cb00",
+        "3e0c037aa729fda5222765c76cb75a183951a8b2",
+        "6efca0441d8e75593e713bfa8dbeec129bd614e8",
+        "df63d752fd44c705dfecd99692965c830098e734"
+      ]
+    },
+    {
+      "caseId": 1006,
+      "department": "Urology",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "b92a1e2ee74ec704c542d2539296c60250743b1e",
+        "74ba7a6a567b3b0ebaf6690f2313755331081c07",
+        "8d794a0d991105e15e56ea19c4ec0144275c5cf5",
+        "f11e6dad986cb0d7a0bc2aa2814a2df10510963e",
+        "c41f2f7310ccc2de3848f38e8e2103e30033d697",
+        "a74952a53a8ecd6ab835cfa997eefcba1aa1ad68"
+      ]
+    },
+    {
+      "caseId": 1559,
+      "department": "Thoracic surgery",
+      "operationType": "Major resection",
+      "isEmergency": true,
+      "tracks": [
+        "ea000639611140d8b569ca3e3093b084341c9ba7",
+        "544f34ea3bef7fb1cafa2896be767d85cb1485c3",
+        "36e6f1535af208f61bade631f770c266c767cb67",
+        null,
+        "5f1317dce4a3cef6b07acb9de254c6a8c8fc60e5",
+        "4878f4daa43832947a7af9dd0da73c5165f7e377"
+      ]
+    },
+    {
+      "caseId": 1678,
+      "department": "Urology",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "223870119d38b888a5b3731b294c710960b1a2e1",
+        "386fa0b23058baaf17a26c408560058f1a539c82",
+        "39cbd1b76a5b0f19383ef8ce6808e1535a7c3308",
+        "85b4bca5a271927639ff8985b7e48fefc6f2cb86",
+        "c6c7645a6af140d46f8659f579c578e754cb6128",
+        "f8367f74f41b7223fc8dfab58423cb14c2cc1a7e"
+      ]
+    },
+    {
+      "caseId": 1780,
+      "department": "Gynecology",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "369a3f2cd079f4d9c5c7dafd72ee4527462b2d45",
+        "bbd8f2d902d8aabaa2df34ae8406074e87a3606e",
+        null,
+        "1466bd4504cbcfae2ef7b9defacc41ff8cbf4383",
+        "22ca2527e69a1ed0cbd5662c3681d8c9fc1f4f51",
+        "515e14ac793f98cd3d2d424304c0356b2e005053"
+      ]
+    },
+    {
+      "caseId": 1802,
+      "department": "General surgery",
+      "operationType": "Hepatic",
+      "isEmergency": false,
+      "tracks": [
+        "697758f49390975720836661adb7b4f1f9ee28c3",
+        "5bf84bdc0a19b74b1c0a428d2c6b9978349bfb28",
+        "885c3d82f9032b904beea83ddf08e349d8c908f5",
+        "66ea474cd42aee5e5a55d20e2544871cdd76cb0e",
+        "017737b73ffdf6716b7f9159f386c45da98cd90d",
+        "b9cdef4d63ecf15bb6c7e563fa3e14edb836811d"
+      ]
+    },
+    {
+      "caseId": 1825,
+      "department": "Thoracic surgery",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "e9e899e72ec1598874bbebc98fbc7b6dd52469f9",
+        "71ba5ff2bf717d2b08efedd04558046c706c6af3",
+        "9604b497bf5883fee225475b0d4d8ba3a5df33ec",
+        "3548ab8c54b049543877426af4f81dc3b18611e3",
+        "3da23bb5b415fdf85fb9ddd6f0daf52719613aa3",
+        "d516bc30f09afa4a11e7f917d1366b3dad18e444"
+      ]
+    },
+    {
+      "caseId": 1845,
+      "department": "General surgery",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "38083cd15e4905aa5e75cd6cfe9bb30c05b01832",
+        "379ae0877c1857baaa554570a78c1c70c4ebf634",
+        "4ffd377ad50c9d7594e5c40a09b549cc8d7252e6",
+        "9d75add1e7cd4240e9b8cd8b307c2dfd7df04d2c",
+        "e34378b7aed2ef72ab00fab2b527c5f31b94f6b4",
+        "9c1307d7adca69d144dce2b4416b0710c1535e3a"
+      ]
+    },
+    {
+      "caseId": 1848,
+      "department": "Gynecology",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "ab685de575bc156ae022f9d6716d6e7d30f21379",
+        "45d94c6f58c7e6e86d5027699021bf6324491dbd",
+        "ca2dfa7367a6bc79f0b98c797a72599dc783c211",
+        "ad7bb7ad02d81bcaa94183c0b1a2eb6296cc287e",
+        "f41482859a445e0ad59ea95b9dd960c57573dc68",
+        "7a1b0d67962f20dfacc41c74e0ce07fedb140d6a"
+      ]
+    },
+    {
+      "caseId": 2479,
+      "department": "Thoracic surgery",
+      "operationType": "Minor resection",
+      "isEmergency": true,
+      "tracks": [
+        "bb1e68a7894d780ec8b7f7250500d5222ba3d78a",
+        "feb06c3b451d72af3052c497c8086ffef4661c4e",
+        "1a415a35af674c42a9433d55fc686ff8da531766",
+        "316f9093ae18fd1bb058d7a34f5dcfedb816b5d6",
+        "f994c780ddb4bcbf77db4c2e7aca720ab74aed9e",
+        "edaa0aca96727c8fb151f1875eddabc391bd4bd3"
+      ]
+    },
+    {
+      "caseId": 2553,
+      "department": "Gynecology",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "98bf8d1641b450183145e26b82a0088dab655dc5",
+        "9cea594ecf092ddf937140f1777332360408ff06",
+        "d06d4898fce7bdcdc87c49ad426b077acabf3f01",
+        "4d45ca6809cd35ed291fef118e6752a1bce8e7a8",
+        "c0642442dc9dcaae24719052be35c4db24e3f815",
+        "68a7084e5df7d35c758ef64b78205c9f53f77f8b"
+      ]
+    },
+    {
+      "caseId": 2670,
+      "department": "Gynecology",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "c7c7fbc05d7cae30acaf78696d4f4d10d8ce7253",
+        "e72ff5061417b56911ec4479378a6e86ba719eec",
+        "84ea5be5eed1ca27ea379d6f256c35c4ca82c3fd",
+        "4afb2f8b5351369a1189ef0fca8a36b19a3a5703",
+        "5b571d010ea64c6bdc7c94de421cec69985d282a",
+        "e2abaafe886a6b14094bd69c60382ce6b805fdb8"
+      ]
+    },
+    {
+      "caseId": 2697,
+      "department": "Thoracic surgery",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "252a570df027388476a3203ea4a5d4a2390f1467",
+        "4ae663b589091496040fa5ba93c4ce445a63d70f",
+        "989093e2b7631116176d6b13f777c470b9693564",
+        "ca614bc162a3900256322797f16ffab8bc5ac63b",
+        "ab6bd2d2b84f28562b479b74a2d6286b5dde25f7",
+        "dc815841b1f1f2d2ab9ab17347e370afed5ce6bc"
+      ]
+    },
+    {
+      "caseId": 2701,
+      "department": "General surgery",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "9a755d595e591285b9e3b3e64685878819900c65",
+        "b49304c2e142b03bd54672153e69127144aee444",
+        "2c51db74a1ffda793aa03bae5b368bdfea9aa0c2",
+        "468b12caadd9f2b2a90ce0c9efdf44e72732f1f3",
+        "61f71a74f64e230100b212bbe3c464144922092c",
+        "178a85f4768ffc1076251b6e0d82a7bee949eaa9"
+      ]
+    },
+    {
+      "caseId": 2738,
+      "department": "General surgery",
+      "operationType": "Transplantation",
+      "isEmergency": false,
+      "tracks": [
+        "bef59ffbd68a6b81b9312d689d3b5c9273785d9a",
+        "9634d41f2ad286d749a69a761f3931448926bd16",
+        "f6d9ac9e5cb56fd7e39d7a5b72f19b2f7f8af164",
+        "29c073943486e4caa8cd9f0ee9482d299b1e8e03",
+        "5f3811bdea7422053094a6ecffcae7fe32303b1a",
+        "3d1138e892283ea29d32457cc318bfb22599672a"
+      ]
+    },
+    {
+      "caseId": 2782,
+      "department": "Urology",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "50e85e95967a4f8aeafdb0f6c3dca88b6996fdbc",
+        "aaf6c9ff1452db9ee18758f61e98d422f6440b73",
+        "89ab5838f70db95cb2bc0aa248d9c9eca24916e3",
+        "e1a649f2417e4634fb0664be9bff3b3084ea8221",
+        "3ee90115be7f3d93ad2385812e81ca80bcabca59",
+        "f865bf4735c8dd5d5916d486591df9a2035996c8"
+      ]
+    },
+    {
+      "caseId": 3198,
+      "department": "Thoracic surgery",
+      "operationType": "Minor resection",
+      "isEmergency": true,
+      "tracks": [
+        "d6a662a278ec845a683245a3a62176740ad6fde6",
+        "c278873a7130eb8144a8f79fe2a37fc9b0f1fc24",
+        "b2bbc722336f9f16fe93784db3205782388f7c5c",
+        "181caa2dece8ad3ebde4a19726549aed5a80987c",
+        "187c75f5318f4ea4fa9330661cb257f10add91fa",
+        "f2a877479f2d43aec4e7b4d1540ebdb82ce68780"
+      ]
+    },
+    {
+      "caseId": 3336,
+      "department": "Gynecology",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "b0c38d6c0910998f191960e1fba91389d1879f58",
+        "160452dfd1c0e5cd8efe66ffe05a1d799c81bab1",
+        "64c15c407b8bec9f791283a5f9632f0b5daeffbd",
+        "f0556e5811ef863a20529e43eb27d7e6aa1ba757",
+        "c08a4d695b971842152a3db59f8509737b45ef27",
+        "4c4aa2389b90bd12dc9f2889c214d149f9a71efe"
+      ]
+    },
+    {
+      "caseId": 3593,
+      "department": "General surgery",
+      "operationType": "Transplantation",
+      "isEmergency": true,
+      "tracks": [
+        "62f3731a0c325a15c4357ad9603f2babee09277e",
+        "44c51e6ea1933f251a67fb00e742b0e8d2273a0a",
+        "6e70630db7ef1e06eef8913e4b1812b0a8a6b4f3",
+        null,
+        "e0a4fe3e3aa4ae73b19ba3203e2b306476cf4760",
+        "c44321835677667e02fb9596547b60693562c73b"
+      ]
+    },
+    {
+      "caseId": 3650,
+      "department": "General surgery",
+      "operationType": "Colorectal",
+      "isEmergency": false,
+      "tracks": [
+        "1c984867d278b7efe863967ee77809e5b58eaa1f",
+        "3c08dd9e71915b36c8b9fef69305d2ecd024ca44",
+        "3731b82e2723d7ae0792d8f5437c894c7e060b1b",
+        "ac40d54aa800f5453e199d798a6cab940cc57492",
+        "e432103be7248d829a34ba1ca7705c84a42f1869",
+        "f0c1439de041692b7cc436449e86b41b2ec4d880"
+      ]
+    },
+    {
+      "caseId": 3688,
+      "department": "Thoracic surgery",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "ff00424cf29f26bc2397ebcb00d5e3a3b4a7f7d1",
+        "08514151e8b61f92332c99b1543ca51d3d2cbfd2",
+        "40f245deabdb86f04d7bcbced127e93e22f3d8ba",
+        "8b90fc5864259aebf9a7bbecdea39984f60df03f",
+        "e1ffd006b70b91e5dae722e66d67f45363adb456",
+        "85c72de57aab1eb49917058278edbc8faf5a88aa"
+      ]
+    },
+    {
+      "caseId": 3729,
+      "department": "Thoracic surgery",
+      "operationType": "Others",
+      "isEmergency": false,
+      "tracks": [
+        "fd361f27c4bcb42cb562d6807c3446992b76361b",
+        "2c4c44e60763f1d2f5ed338e53eb7f1ab100f689",
+        "5f568544fc2d9cd2f1d59cb7bde5ae1499042192",
+        "a5708cfb6fc31d83b710548cf4291b08705f6e4f",
+        "3a5faefd475d43650fb6d82f619dd4b6f11ede8b",
+        "511884f674aac8b26ddfb18d9f80b462189f75f2"
+      ]
+    },
+    {
+      "caseId": 3744,
+      "department": "Urology",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "b8a52153fc101bb72cb0ae02e75717469c85d218",
+        "9d13a227fb17a04de5920d26eb4dbbdbf7c776f5",
+        "7c1573a47738b990a46d144a92201a0119cd902a",
+        "816d08db959008438b94e9afef97270b50458b5c",
+        "ceb2405d4967bcde31f37f6d0ac1e499c318710e",
+        "1fc850fff5b4daf14098fedd97fe743ca897b758"
+      ]
+    },
+    {
+      "caseId": 4067,
+      "department": "Gynecology",
+      "operationType": "Major resection",
+      "isEmergency": true,
+      "tracks": [
+        "49151f1bb1c084d2e7f9fdb9c2482e6989bd25c5",
+        "6afb3bbd221ca58e60c2ad56387edc129e57b68f",
+        "1080e0cfe2571d52183920aca158518546ece47c",
+        "b9ec726261cbe02b3f81421adde6477299fce35f",
+        "59093fa4b2780b6b94267986c24be92655e514bc",
+        "82161aba0d18eb00b9d77d462144aa93bf5ff15d"
+      ]
+    },
+    {
+      "caseId": 4307,
+      "department": "Urology",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "c91340741a94b618a06b85629627a7f70ae4eabf",
+        "99a970b38a6ae383959bb057a0700baf120d6831",
+        "75cea68a287918cbd47d5ad91e1ceb87567fbf51",
+        "411e183e96e4ccc3a2bbbd24a62f696c1fd99a6d",
+        "587c8e89d37e2ba46fcbf0b44e6a764fbc7ad834",
+        "ab948647f0db9a1c1067d13aa3bf609ca26dc5bf"
+      ]
+    },
+    {
+      "caseId": 4332,
+      "department": "Gynecology",
+      "operationType": "Minor resection",
+      "isEmergency": false,
+      "tracks": [
+        "f4d2eccbfe5f06989326d0db830f46ff14ed7125",
+        "0fb1eab37900cb6f457ede6ce98aeda4b0a54ebb",
+        "a8cfc8fd408a4ab60578ad32289c0f828807aae2",
+        "7042ff794ba92095dd6df0e88a5cfa36353f2245",
+        "9fb6f2a7643f4343dfac36302f40c122f441f1e1",
+        "e4c8e6b6d99df73665798c93e672d55e9e0e0868"
+      ]
+    },
+    {
+      "caseId": 4468,
+      "department": "Gynecology",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "c4693f93be9a571ccc92bf29d290e522b572386a",
+        "9bc68b474cba8c9a797bcc745ec803478effd750",
+        "dc066e9330eae978de8076cc53edb4ebf165c10c",
+        "f116051099c34401f8d67827d706ae7ae7b8920a",
+        "a96d1676ceab441f485eaaf13ac93f0799ac9bd0",
+        "e41b7a92a2df553c27679b15e910815d179fb58c"
+      ]
+    },
+    {
+      "caseId": 4497,
+      "department": "Thoracic surgery",
+      "operationType": "Minor resection",
+      "isEmergency": true,
+      "tracks": [
+        "f1a3565e7961e6bc81218de4eed71c2d39a89dd8",
+        "1b8c97955c1e820d4363bdc75c27371f68f15134",
+        "506b0d54219e61c02d01f68c04664cc78fb29557",
+        "a4c0d11007ba2964599b23031302a2f2019eb438",
+        "5dfc187391f76141926073b861c462ba21da214e",
+        "60fe1fa66414f9742a37df5b01c6351a3ca843f7"
+      ]
+    },
+    {
+      "caseId": 4537,
+      "department": "General surgery",
+      "operationType": "Biliary/Pancreas",
+      "isEmergency": true,
+      "tracks": [
+        "718715734ad64ad34f88b72d0e29b7d81fa7a36e",
+        "22c156fd639e89d29b638e1e3e2bf12aefec6194",
+        "6c2d3bbe188905e918501083415165fa6517ca88",
+        "13f945d82b5d0ee38566475aa74a59b12d2845ff",
+        "a1675bd4442c50b61dd84ecc63a47e12e92f1016",
+        "4ea7eccc8fb789dad8389bfd49abfe135b5220cd"
+      ]
+    },
+    {
+      "caseId": 4551,
+      "department": "General surgery",
+      "operationType": "Breast",
+      "isEmergency": false,
+      "tracks": [
+        "31ea30f3b918d8e3a4b38cc334b184f2f37ce96e",
+        "05aec17edbaf64be4454bc8ba51b9f07c8c12e0b",
+        "4537a4170a082341278d79158fd9c2b43c3f14b7",
+        "fb2f7457b5009432b2677759ad4095b69ec7ae9b",
+        "a9b27fcf3d81af8f9bac6d3f42dca5224fb28f68",
+        "8f8b9650b60e208ecf7e3ede8b4807073b38db33"
+      ]
+    },
+    {
+      "caseId": 4660,
+      "department": "Thoracic surgery",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "2d15780050112792fe51129d2009e82e8ce70c69",
+        "6645b48534712ef9e16e3d42b3ce0fb4494a4ccc",
+        "4112439f94a8c22e077e18e41d44555fd8155f35",
+        null,
+        "81f2d905d07f2a35e2ddeaa9d0f50cc7071df804",
+        "57f3851e088e1bfa4e2ed9f5ffff297032fccd06"
+      ]
+    },
+    {
+      "caseId": 5242,
+      "department": "Urology",
+      "operationType": "Major resection",
+      "isEmergency": false,
+      "tracks": [
+        "00a84b66b95e6d0f6a87d339bf4484f9f51d1647",
+        "8d1def82eced913caaa2bd5fe99af8202bc013df",
+        "3fa0137246c64106fb161874846054720bde1fb4",
+        "95efaabdbcb83d5a52a74fa5c3305b7776fd1c1e",
+        "5d255e2eb92037ebfbe3322bd6151de8ef768683",
+        "f215ae84a105905e0b0ad92b302bf4e649cbae70"
+      ]
+    },
+    {
+      "caseId": 5306,
+      "department": "Gynecology",
+      "operationType": "Others",
+      "isEmergency": true,
+      "tracks": [
+        "ff320e2945220e3af5ae112649ea7d7f8e661b2c",
+        "6ab681be9e817510ae4ded5aa049bb969d224efe",
+        null,
+        "447ba171529dd5e3c83b5fcf5ec2009922874fd6",
+        "eae4d9fd79233321b402c35f891b8298a8fe6368",
+        "3d0b484bdba5d0285086f25e3c400846fd2f15da"
+      ]
+    },
+    {
+      "caseId": 5415,
+      "department": "Thoracic surgery",
+      "operationType": "Minor resection",
+      "isEmergency": true,
+      "tracks": [
+        "2f2f7e34785670945ebac22f05f1da2f78843fcf",
+        "bfc6f669ccfbd29962c82deab32bfd121b0ae75d",
+        "a9c88687bd89cd076c8403936250314f9d7c775c",
+        "40feac8a4409d994cab772a3865dc108b75c9e99",
+        "c7778c51c1b17898e5b19e7f887984bb4eaa126b",
+        "fcdb7c9f0535800d9f2c9e628177896ed2ea1970"
+      ]
+    },
+    {
+      "caseId": 5448,
+      "department": "Gynecology",
+      "operationType": "Others",
+      "isEmergency": false,
+      "tracks": [
+        "db0196fdbebcda6d23ee5a43661a533839a51625",
+        "573044c3a404a3b5b711863c0a6e89dd0936df80",
+        "e96e59460964bf0683eefbe5cfe1165b480d0e8a",
+        "ead17739cd3c50b889661f4f23294b85cdbecd6b",
+        "4d1bac5bd115220eadfe99a079971cb6589d2cd1",
+        "3394328bed65ddeb0bf68e6ef43fca8500777059"
+      ]
+    },
+    {
+      "caseId": 5452,
+      "department": "General surgery",
+      "operationType": "Colorectal",
+      "isEmergency": true,
+      "tracks": [
+        "5e38954b4c0d2c12c0a77da7e9d8ddeeb1f0c559",
+        "1aa138a38b9a9c800c9bf8030ab5ad225af5c1b2",
+        "f48d58a685016203212a4b5603aa644249873d69",
+        "0970729e26e91a879aa486cedf8b126c7f6876fc",
+        "75f215df0306807222753d484760a624a15da6cf",
+        "e556169f9d1611c7ba53ca002b6dc360081436bc"
+      ]
+    },
+    {
+      "caseId": 5467,
+      "department": "General surgery",
+      "operationType": "Hepatic",
+      "isEmergency": false,
+      "tracks": [
+        "1096740976f8b7d523090de1ffd2da63a4aba151",
+        "cdaae87e06d267ef368a576e07db0f365b6d8310",
+        "11d90b0621123c216ff285306e3b1759c5272f2a",
+        "c7027831d18e396dd24e376c1e7420ab990c7720",
+        "1a14b5494aab2082eff8533f41fee3cc1f674290",
+        "7b9e22e7c621bf59234900982722bedb0092b07d"
+      ]
+    },
+    {
+      "caseId": 5490,
+      "department": "Thoracic surgery",
+      "operationType": "Others",
+      "isEmergency": false,
+      "tracks": [
+        "bf662b09d202b5449d29ef0cf547be6936417e48",
+        "c794db31d9ff79063db9fc0b688c102cba4df221",
+        "573b3bd8a947084476f988288c5e4542911bfceb",
+        null,
+        "6c737f2514d09595c73a856b03a609b079c58985",
+        "481db8bd4d55370ced6f9f718ccc0233202e8d50"
+      ]
+    },
+    {
+      "caseId": 6038,
+      "department": "Urology",
+      "operationType": "Minor resection",
+      "isEmergency": true,
+      "tracks": [
+        "018a5354a7e8f4547032b307eff7b6c39afe365e",
+        "4c4b3d58e20dfe8c77aa61b419b2d1fb24d638ae",
+        "e1fa4b658d8900573ba25cfeda92c72392fd15ad",
+        "62171b4807851e8dff244e32cbcbc6b50ac51010",
+        "a80bee474c91cd577d742a8314faa986c6b7ca16",
+        "4108059f73c8fa72cb5a5764bfbd388d58e2a172"
+      ]
+    }
+  ]
+}
