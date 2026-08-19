@@ -12,6 +12,7 @@ import { ErrorState } from '@/components/ErrorState';
 import { LoadingState } from '@/components/LoadingState';
 import { AgeHistogramPanel } from './AgeHistogramPanel';
 import { DepartmentPanel } from './DepartmentPanel';
+import { RiskPanel } from './RiskPanel';
 import { FilterToolbar } from './FilterToolbar';
 
 /** Panels still to be built. Placeholders until each lands. */
@@ -65,6 +66,7 @@ export function DashboardContent(): ReactElement {
         <DashboardGrid>
           <AgeHistogramPanel allCases={cases} matchedCases={matched} />
           <DepartmentPanel allCases={cases} matchedCases={matched} />
+          <RiskPanel matchedCases={matched} />
           {PLANNED_PANELS.map((panel) => (
             <ChartCard key={panel.title} title={panel.title} subtitle={panel.subtitle}>
               <EmptyState
