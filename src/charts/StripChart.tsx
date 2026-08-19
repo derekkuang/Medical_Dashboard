@@ -41,6 +41,7 @@ export function StripChart({
   positionSeconds,
 }: StripChartProps): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const readoutRef = useRef<HTMLSpanElement>(null);
   // Written in an effect rather than during render: the draw loop reads this
   // on an animation frame, so it only needs to be current by the next frame,
   // and mutating a ref mid-render is the anti-pattern react-hooks/refs catches.
@@ -66,8 +67,21 @@ export function StripChart({
 
       const to = positionRef.current;
       const from = to - windowSeconds;
+      const visible = buffer.window(from, to);
 
-      drawTrace(context, buffer.window(from, to), {
+      // The numeric readout is written straight to the DOM rather than through
+      // state. React renders this span once with no children and never
+      // reconciles into it, so it is the same leaf-ownership rule the brush
+      // follows — and it keeps the zero-re-render property intact. Routing it
+      // through state would re-render the trace on every frame that carried a
+      // new sample, which is the thing this whole layer exists to avoid.
+      const readout = readoutRef.current;
+      if (readout !== null) {
+        const latest = visible.values.at(-1);
+        readout.textContent = latest === undefined ? '—' : latest.toFixed(1);
+      }
+
+      drawTrace(context, visible, {
         width,
         height,
         from,
@@ -95,7 +109,11 @@ export function StripChart({
       >
         <span>{label}</span>
         <span>
-          {unit} · {approximateHz >= 1 ? `${String(Math.round(approximateHz))} Hz` : 'intermittent'}
+          {/* Read by a screen reader on navigation rather than announced, which
+              at this update rate would be unusable. */}
+          <span ref={readoutRef} style={{ color: chartPalette.highlight }} />
+          {` ${unit} · `}
+          {approximateHz >= 1 ? `${String(Math.round(approximateHz))} Hz` : 'intermittent'}
         </span>
       </figcaption>
       {/* The canvas is a picture with no accessible interior, so it is labelled

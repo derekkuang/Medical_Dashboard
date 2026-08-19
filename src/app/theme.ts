@@ -35,6 +35,21 @@ export const theme = createTheme({
         // Every focusable element gets a visible ring. MUI's default outline is
         // easy to lose against a dark background.
         ':focus-visible': { outline: '2px solid #60a5fa', outlineOffset: '2px' },
+
+        // Honour a reduced-motion preference globally rather than per
+        // component. Nothing here conveys meaning through motion — the
+        // transitions are decorative and the loading spinner has a text label
+        // beside it — so suppressing all of it loses no information. Not set to
+        // 0 outright: a near-zero duration still fires transitionend, which
+        // some MUI components rely on to finish unmounting.
+        '@media (prefers-reduced-motion: reduce)': {
+          '*, *::before, *::after': {
+            animationDuration: '0.01ms !important',
+            animationIterationCount: '1 !important',
+            transitionDuration: '0.01ms !important',
+            scrollBehavior: 'auto !important',
+          },
+        },
       },
     },
     MuiPaper: {
