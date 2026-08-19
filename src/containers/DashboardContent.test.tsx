@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, stubCasesCsv, stubCasesFailure } from '@/test/renderWithProviders';
 import { DashboardContent } from './DashboardContent';
@@ -115,6 +115,35 @@ describe('DashboardContent', () => {
     await waitFor(() => {
       expect(window.location.search).toBe('');
     });
+  });
+
+  it('filters by age from the keyboard, without the brush', async () => {
+    // d3-brush is pointer-only, so the slider is the accessible path to the
+    // same filter. Ages in the fixture are 40, 55, 61 and 70, giving a domain
+    // of 40-70; nudging the lower thumb up by one year drops the 40-year-old.
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+    await screen.findByText(/of 4 cases/);
+
+    const [minThumb] = screen.getAllByRole('slider');
+    // focus() is a raw DOM call, so the state update MUI makes in response is
+    // outside React's batching unless it is wrapped.
+    act(() => {
+      minThumb!.focus();
+    });
+    await userEvent.keyboard('{ArrowRight}');
+
+    expect(await screen.findByText(/of 4 cases/)).toHaveTextContent('3');
+    expect(screen.getByText('Ages 41 to 70')).toBeInTheDocument();
+  });
+
+  it('labels each slider thumb distinctly', async () => {
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+    await screen.findByText(/of 4 cases/);
+
+    expect(screen.getByRole('slider', { name: 'Minimum age' })).toBeInTheDocument();
+    expect(screen.getByRole('slider', { name: 'Maximum age' })).toBeInTheDocument();
   });
 
   it('keeps every department selectable after one is chosen', async () => {

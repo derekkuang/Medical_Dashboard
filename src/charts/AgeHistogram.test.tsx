@@ -24,6 +24,8 @@ function renderChart(props: Partial<Parameters<typeof AgeHistogram>[0]> = {}) {
       height={300}
       splitBySex={false}
       description="10 cases with a recorded age. Median 40 years."
+      brushSelection={null}
+      onBrushChange={() => undefined}
       {...props}
     />,
   );
@@ -44,7 +46,8 @@ describe('AgeHistogram', () => {
 
     // Empty bins render nothing rather than a zero-height rect, which would
     // still catch the pointer and show a tooltip for no data.
-    expect(container.querySelectorAll('rect')).toHaveLength(3);
+    // Scoped to bars: d3-brush adds its own overlay and selection rects.
+    expect(container.querySelectorAll('rect.age-bar')).toHaveLength(3);
   });
 
   it('labels each bar with its range and count', () => {
@@ -82,7 +85,7 @@ describe('AgeHistogram', () => {
     // maxCount 0 would give a [0, 0] y domain, mapping every value to one pixel.
     const { container } = renderChart({ bins: [], maxCount: 0 });
 
-    expect(container.querySelectorAll('rect')).toHaveLength(0);
+    expect(container.querySelectorAll('rect.age-bar')).toHaveLength(0);
     expect(screen.getByRole('img')).toBeInTheDocument();
   });
 
@@ -91,7 +94,7 @@ describe('AgeHistogram', () => {
     // negative, and a negative width silently drops the rect.
     const { container } = renderChart({ width: 200 });
 
-    const widths = [...container.querySelectorAll('rect')].map((r) =>
+    const widths = [...container.querySelectorAll('rect.age-bar')].map((r) =>
       Number(r.getAttribute('width')),
     );
     expect(widths.every((w) => w >= 1)).toBe(true);

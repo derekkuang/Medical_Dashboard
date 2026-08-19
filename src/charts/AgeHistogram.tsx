@@ -5,6 +5,7 @@ import { ChartFrame } from './primitives/ChartFrame';
 import { AxisBottom, AxisLeft } from './primitives/Axis';
 import { Grid } from './primitives/Grid';
 import { linearTicks } from './primitives/ticks';
+import { BrushX } from './primitives/BrushX';
 import { chartPalette } from './palette';
 
 interface AgeHistogramProps {
@@ -17,6 +18,9 @@ interface AgeHistogramProps {
   splitBySex: boolean;
   /** One sentence of finding, read out in place of the marks. */
   description: string;
+  /** Current age selection in data space, or null. */
+  brushSelection: [number, number] | null;
+  onBrushChange: (range: [number, number] | null) => void;
 }
 
 /**
@@ -34,6 +38,8 @@ export function AgeHistogram({
   height,
   splitBySex,
   description,
+  brushSelection,
+  onBrushChange,
 }: AgeHistogramProps): ReactElement {
   return (
     <ChartFrame width={width} height={height} title="Age distribution" description={description}>
@@ -45,6 +51,8 @@ export function AgeHistogram({
           innerWidth={innerWidth}
           innerHeight={innerHeight}
           splitBySex={splitBySex}
+          brushSelection={brushSelection}
+          onBrushChange={onBrushChange}
         />
       )}
     </ChartFrame>
@@ -58,6 +66,8 @@ interface BodyProps {
   innerWidth: number;
   innerHeight: number;
   splitBySex: boolean;
+  brushSelection: [number, number] | null;
+  onBrushChange: (range: [number, number] | null) => void;
 }
 
 function AgeHistogramBody({
@@ -67,6 +77,8 @@ function AgeHistogramBody({
   innerWidth,
   innerHeight,
   splitBySex,
+  brushSelection,
+  onBrushChange,
 }: BodyProps): ReactElement {
   const x = useMemo(
     () => scaleLinear().domain(domain).range([0, innerWidth]),
@@ -109,6 +121,7 @@ function AgeHistogramBody({
           return (
             <rect
               key={b.x0}
+              className="age-bar"
               x={left}
               y={y(b.count)}
               width={barWidth}
@@ -144,6 +157,7 @@ function AgeHistogramBody({
               const rect = (
                 <rect
                   key={segment.key}
+                  className="age-bar"
                   x={left}
                   y={y(top)}
                   width={barWidth}
@@ -159,6 +173,16 @@ function AgeHistogramBody({
           </g>
         );
       })}
+
+      {/* After the bars so the brush overlay sits above them and receives the
+          pointer, but before the axes so it cannot cover the tick labels. */}
+      <BrushX
+        innerWidth={innerWidth}
+        innerHeight={innerHeight}
+        scale={x}
+        selection={brushSelection}
+        onChange={onBrushChange}
+      />
 
       <AxisLeft ticks={yTicks} label="Cases" />
       <AxisBottom
