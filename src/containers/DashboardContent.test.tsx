@@ -146,6 +146,60 @@ describe('DashboardContent', () => {
     expect(screen.getByRole('slider', { name: 'Maximum age' })).toBeInTheDocument();
   });
 
+  it('combines an age brush with a department bar instead of cancelling one', async () => {
+    // The original's cross-filter bug in one test. It kept a mutable
+    // `filteredCases` and fed it back into two children under different
+    // conditions, so choosing a department collapsed the age selection that
+    // produced it. With one authoritative filter state the two compose.
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+    await screen.findByText(/of 4 cases/);
+
+    const [minThumb] = screen.getAllByRole('slider');
+    act(() => {
+      minThumb!.focus();
+    });
+    await userEvent.keyboard('{ArrowRight}');
+    expect(await screen.findByText(/of 4 cases/)).toHaveTextContent('3');
+
+    await userEvent.click(screen.getByRole('button', { name: /^Urology/ }));
+
+    // Urology has two cases, aged 40 and 70; only the 70-year-old survives both.
+    expect(await screen.findByText(/of 4 cases/)).toHaveTextContent('1');
+    expect(screen.getByText('Ages 41 to 70')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(window.location.search).toContain('dept=Urology');
+      expect(window.location.search).toContain('age=41-70');
+    });
+  });
+
+  it('clears the department when its bar is chosen twice', async () => {
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+    await screen.findByText(/of 4 cases/);
+
+    await userEvent.click(screen.getByRole('button', { name: /^Urology/ }));
+    expect(await screen.findByText(/of 4 cases/)).toHaveTextContent('2');
+
+    await userEvent.click(screen.getByRole('button', { name: /^Urology/ }));
+    expect(await screen.findByText(/of 4 cases/)).toHaveTextContent('4');
+  });
+
+  it('keeps an excluded department on screen so the filter is legible', async () => {
+    stubCasesCsv(CSV);
+    renderWithProviders(<DashboardContent />);
+    await screen.findByText(/of 4 cases/);
+
+    await userEvent.click(screen.getByRole('button', { name: /^Urology/ }));
+
+    // Gynecology is now excluded, but its row stays — showing 0 of 1 rather
+    // than disappearing, which is what the original did.
+    expect(
+      await screen.findByRole('button', { name: /Gynecology: 0 of 1 cases/ }),
+    ).toBeInTheDocument();
+  });
+
   it('keeps every department selectable after one is chosen', async () => {
     // Facets come from the full table, not the filtered cohort. Deriving them
     // from the cohort would make the other options disappear on first use.
