@@ -21,6 +21,22 @@ export default defineConfig({
     // fires, so this is tightened rather than silenced.
     chunkSizeWarningLimit: 600,
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Split dependencies away from application code so a chart tweak
+        // invalidates an 80 kB chunk rather than 600 kB. Grouped by path rather
+        // than by package name: naming react explicitly produced an empty chunk,
+        // because MUI's static import of it caused rollup to hoist react into
+        // the MUI chunk anyway. This splits by rate of change, not to shrink the
+        // total — a cold load fetches the same bytes either way.
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('@mui') || id.includes('@emotion')) return 'mui';
+          if (id.includes('d3-')) return 'd3';
+          return 'vendor';
+        },
+      },
+    },
   },
   test: {
     globals: true,

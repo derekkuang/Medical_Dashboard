@@ -2,24 +2,19 @@ import { useMemo, type ReactElement } from 'react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { useGetCasesQuery } from '@/data/casesApi';
 import { allFiltersCleared } from '@/features/filters/filtersSlice';
-import { selectFilters, selectHasActiveFilters } from '@/features/filters/selectors';
+import { selectFilters } from '@/features/filters/selectors';
 import { filterCases } from '@/transforms/filterCases';
 import { useUrlSyncedFilters } from '@/hooks/useUrlSyncedFilters';
 import { DashboardGrid } from '@/components/AppShell';
-import { ChartCard } from '@/components/ChartCard';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingState } from '@/components/LoadingState';
 import { AgeHistogramPanel } from './AgeHistogramPanel';
 import { DepartmentPanel } from './DepartmentPanel';
 import { AlbuminPanel } from './AlbuminPanel';
+import { PhasePanel } from './PhasePanel';
 import { RiskPanel } from './RiskPanel';
 import { FilterToolbar } from './FilterToolbar';
-
-/** Panels still to be built. Placeholders until each lands. */
-const PLANNED_PANELS = [
-  { title: 'Procedure phases', subtitle: 'Anaesthesia and operation intervals' },
-] as const;
 
 export function DashboardContent(): ReactElement {
   useUrlSyncedFilters();
@@ -27,7 +22,6 @@ export function DashboardContent(): ReactElement {
   const dispatch = useAppDispatch();
   const { data, isLoading, isError, error, refetch } = useGetCasesQuery();
   const filters = useAppSelector(selectFilters);
-  const hasActiveFilters = useAppSelector(selectHasActiveFilters);
 
   const cases = data?.cases;
 
@@ -68,16 +62,7 @@ export function DashboardContent(): ReactElement {
           <DepartmentPanel allCases={cases} matchedCases={matched} />
           <RiskPanel matchedCases={matched} />
           <AlbuminPanel matchedCases={matched} />
-          {PLANNED_PANELS.map((panel) => (
-            <ChartCard key={panel.title} title={panel.title} subtitle={panel.subtitle}>
-              <EmptyState
-                title="Not built yet"
-                description={`This panel arrives in phase C. ${matched.length.toLocaleString()} cases are in scope${
-                  hasActiveFilters ? ' under the current filters' : ''
-                }.`}
-              />
-            </ChartCard>
-          ))}
+          <PhasePanel matchedCases={matched} />
         </DashboardGrid>
       )}
     </>
