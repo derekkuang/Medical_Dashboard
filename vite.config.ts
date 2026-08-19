@@ -59,7 +59,7 @@ export default defineConfig({
       ],
       // Type-only modules compile to nothing, so they report 0% with no
       // statements to cover. Listing them would make the report read as a gap.
-      exclude: ['**/schema.ts'],
+      exclude: ['**/schema.ts', '**/TelemetrySource.ts'],
       thresholds: {
         statements: 80,
         branches: 75,
