@@ -44,6 +44,7 @@ interface ChannelState {
 export class VitalDBReplaySource implements TelemetrySource {
   private readonly states = new Map<string, ChannelState>();
   private readonly statusListeners = new Set<(status: ConnectionStatus) => void>();
+  private readonly resetListeners = new Set<() => void>();
   private readonly loadTrack: TrackLoader;
   private readonly tickMs: number;
   private readonly now: () => number;
@@ -117,6 +118,13 @@ export class VitalDBReplaySource implements TelemetrySource {
     };
   }
 
+  onReset(handler: () => void): Unsubscribe {
+    this.resetListeners.add(handler);
+    return () => {
+      this.resetListeners.delete(handler);
+    };
+  }
+
   onStatus(onChange: (status: ConnectionStatus) => void): Unsubscribe {
     this.statusListeners.add(onChange);
     // Emit current state immediately: a subscriber that arrives after loading
@@ -129,10 +137,17 @@ export class VitalDBReplaySource implements TelemetrySource {
   }
 
   play(rate = 1): void {
-    if (this.closed || this.timer !== null) return;
+    if (this.closed) return;
 
+    // Rate is applied before the early return, so changing speed mid-playback
+    // takes effect. Returning first made the speed control a no-op whenever it
+    // mattered — which is to say, whenever something was actually playing.
     this.rate = rate;
+    // Rebasing the clock stops the elapsed time since the last tick being
+    // re-scaled by the new rate, which would jump the cursor forward.
     this.lastTickAt = this.now();
+
+    if (this.timer !== null) return;
     this.setStatus({ state: 'streaming' });
     this.timer = setInterval(() => {
       this.tick();
@@ -148,10 +163,9 @@ export class VitalDBReplaySource implements TelemetrySource {
    * Jumps to a position.
    *
    * Cursors are rebuilt by binary search rather than replayed forward, so
-   * seeking to the end of a 5.7 million sample track is not O(n). Consumers
-   * must clear their own buffers: seek is always initiated through the layer
-   * that owns them, and having the source push a reset would put buffer
-   * lifecycle in two places.
+   * seeking to the end of a 5.7 million sample track is not O(n). Consumers are
+   * then told to discard their buffers through onReset — an earlier version put
+   * that obligation in this comment and nothing honoured it.
    */
   seek(seconds: number): void {
     this.positionSeconds = Math.max(0, seconds);
@@ -159,6 +173,11 @@ export class VitalDBReplaySource implements TelemetrySource {
       state.cursor = firstIndexAfter(state.samples, this.positionSeconds);
     }
     this.lastTickAt = this.now();
+
+    // Tell consumers their buffered window is no longer contiguous. Without
+    // this a backward seek leaves older samples sitting after newer ones by
+    // timestamp, and the trace visibly doubles back.
+    for (const handler of this.resetListeners) handler();
   }
 
   close(): void {
@@ -171,6 +190,7 @@ export class VitalDBReplaySource implements TelemetrySource {
       state.samples = [];
     }
     this.statusListeners.clear();
+    this.resetListeners.clear();
   }
 
   private stopTimer(): void {
@@ -194,8 +214,14 @@ export class VitalDBReplaySource implements TelemetrySource {
         state.samples.push(...samples);
       });
       state.loaded = true;
-      // Only report streaming if playback is actually running; a track that
-      // finishes loading while paused must not silently claim to be live.
+
+      // Only speak for the whole source once every subscribed track has
+      // arrived. A 60 kB heart rate track finishing first must not report
+      // "ready" while a 61 MB ECG is still downloading, and it must not
+      // overwrite an error raised by another channel.
+      if (this.status.state === 'error') return;
+      if (!this.everyTrackLoaded()) return;
+      // A track that finishes while paused must not claim to be live.
       this.setStatus({ state: this.timer === null ? 'idle' : 'streaming' });
     } catch (error) {
       if (controller.signal.aborted) return;

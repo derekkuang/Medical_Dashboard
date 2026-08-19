@@ -113,6 +113,122 @@ describe('VitalDBReplaySource', () => {
     source.close();
   });
 
+  it('applies a new rate to playback already running', async () => {
+    // The speed control is only ever used while something is playing, so
+    // returning early when a timer exists made it a no-op exactly when it
+    // mattered.
+    const source = makeSource();
+    const seen: number[] = [];
+    source.subscribe('tid-hr', (b) => seen.push(...b.map((s) => s.time)));
+    await vi.waitFor(() => {
+      expect(source.duration).toBe(10);
+    });
+
+    source.play(1);
+    advance(500);
+    expect(seen).toEqual([]);
+
+    source.play(8);
+    advance(500); // four seconds of case time at 8x
+
+    expect(seen).toEqual([1, 2, 3]);
+    source.close();
+  });
+
+  it('does not jump the cursor when the rate changes', async () => {
+    // Rebasing the clock stops elapsed time since the last tick being
+    // re-scaled by the new rate.
+    const source = makeSource();
+    source.subscribe('tid-hr', () => undefined);
+    await vi.waitFor(() => {
+      expect(source.duration).toBe(10);
+    });
+
+    source.play(1);
+    advance(1000);
+    const afterOneSecond = source.position;
+
+    source.play(4);
+    expect(source.position).toBeCloseTo(afterOneSecond, 5);
+    source.close();
+  });
+
+  it('tells consumers to discard their buffers when it seeks', async () => {
+    const source = makeSource();
+    const onReset = vi.fn();
+    source.onReset(onReset);
+    source.subscribe('tid-hr', () => undefined);
+    await vi.waitFor(() => {
+      expect(source.duration).toBe(10);
+    });
+
+    source.seek(5);
+
+    expect(onReset).toHaveBeenCalledTimes(1);
+    source.close();
+  });
+
+  it('waits for every subscribed track before reporting ready', async () => {
+    // A 60 kB heart rate track finishing must not claim the source is ready
+    // while a 61 MB ECG is still downloading.
+    let finishEcg = (): void => {
+      /* replaced once the loader is invoked */
+    };
+    const source = makeSource({
+      loadTrack: (tid, _signal, onSamples) => {
+        if (tid === 'tid-hr') {
+          onSamples(HR);
+          return Promise.resolve();
+        }
+        return new Promise<void>((resolve) => {
+          finishEcg = () => {
+            onSamples([{ time: 42, value: 1 }]);
+            resolve();
+          };
+        });
+      },
+    });
+
+    const states: ConnectionStatus[] = [];
+    source.onStatus((s) => states.push(s));
+    source.subscribe('tid-hr', () => undefined);
+    source.subscribe('tid-ecg', () => undefined);
+
+    await vi.waitFor(() => {
+      expect(source.duration).toBe(10);
+    });
+    expect(states.at(-1)?.state).toBe('loading');
+
+    finishEcg();
+    await vi.waitFor(() => {
+      expect(states.at(-1)?.state).toBe('idle');
+    });
+
+    source.close();
+  });
+
+  it('does not overwrite an error raised by another track', async () => {
+    const source = makeSource({
+      loadTrack: (tid, _signal, onSamples) => {
+        if (tid === 'tid-hr') return Promise.reject(new Error('HTTP 503'));
+        onSamples([{ time: 1, value: 1 }]);
+        return Promise.resolve();
+      },
+    });
+
+    const states: ConnectionStatus[] = [];
+    source.onStatus((s) => states.push(s));
+    source.subscribe('tid-hr', () => undefined);
+    source.subscribe('tid-ecg', () => undefined);
+
+    await vi.waitFor(() => {
+      expect(states.some((s) => s.state === 'error')).toBe(true);
+    });
+    expect(states.at(-1)?.state).toBe('error');
+
+    source.close();
+  });
+
   it('stops advancing when paused', async () => {
     const source = makeSource();
     source.subscribe('tid-hr', () => undefined);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type ReactElement } from 'react';
+import { useCallback, useRef, type ReactElement } from 'react';
 import type { RingBuffer } from '@/telemetry/RingBuffer';
 import type { TelemetrySource } from '@/telemetry/TelemetrySource';
 import { useTelemetryChannel } from '@/hooks/useTelemetryChannel';
@@ -15,8 +15,6 @@ interface StripChartProps {
   windowSeconds: number;
   width: number;
   height: number;
-  /** Playback position, used to place the visible window. */
-  positionSeconds: number;
 }
 
 /**
@@ -38,17 +36,9 @@ export function StripChart({
   windowSeconds,
   width,
   height,
-  positionSeconds,
 }: StripChartProps): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const readoutRef = useRef<HTMLSpanElement>(null);
-  // Written in an effect rather than during render: the draw loop reads this
-  // on an animation frame, so it only needs to be current by the next frame,
-  // and mutating a ref mid-render is the anti-pattern react-hooks/refs catches.
-  const positionRef = useRef(positionSeconds);
-  useEffect(() => {
-    positionRef.current = positionSeconds;
-  }, [positionSeconds]);
 
   // Enough for the visible window plus a margin, so scrolling never runs off
   // the end of retained history. Bounded by construction: a live feed has no
@@ -65,7 +55,10 @@ export function StripChart({
       // has been detached mid-frame.
       if (context === null) return;
 
-      const to = positionRef.current;
+      // Read from the source, not from a prop mirrored out of the store. The
+      // store's copy updates four times a second to drive the scrubber; the
+      // window needs the real cursor every frame or the trace scrolls in steps.
+      const to = source?.position ?? 0;
       const from = to - windowSeconds;
       const visible = buffer.window(from, to);
 
@@ -91,10 +84,18 @@ export function StripChart({
         grid: chartPalette.grid,
       });
     },
-    [width, height, windowSeconds],
+    [source, width, height, windowSeconds],
   );
 
-  useTelemetryChannel({ source, channelId, capacity, draw });
+  // redrawKey: setting a canvas width attribute clears its bitmap, so a resize
+  // must repaint even if no new sample has arrived.
+  useTelemetryChannel({
+    source,
+    channelId,
+    capacity,
+    draw,
+    redrawKey: `${String(width)}x${String(height)}`,
+  });
 
   return (
     <figure style={{ margin: 0 }}>

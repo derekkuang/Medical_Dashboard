@@ -67,6 +67,18 @@ export interface TelemetrySource {
   /** Connection state changes, including the current state on subscribe. */
   onStatus(onChange: (status: ConnectionStatus) => void): Unsubscribe;
 
+  /**
+   * Fires when the timeline jumps and retained history is no longer contiguous
+   * with what follows — a seek, principally.
+   *
+   * Consumers holding a window of samples must discard it. Buffered samples
+   * from after a backward seek are still in the past by timestamp, so a
+   * consumer that keeps them ends up drawing a trace that doubles back on
+   * itself. This is a push rather than an instruction in a docstring because
+   * the obligation is easy to forget and impossible to see at the call site.
+   */
+  onReset(handler: () => void): Unsubscribe;
+
   /** rate is a multiple of real time. 1 is wall-clock speed. */
   play(rate?: number): void;
   pause(): void;

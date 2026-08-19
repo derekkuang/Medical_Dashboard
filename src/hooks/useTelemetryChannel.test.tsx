@@ -14,6 +14,7 @@ import { useTelemetryChannel } from './useTelemetryChannel';
 /** A source tests can push into directly. */
 class FakeSource implements TelemetrySource {
   private readonly listeners = new Map<string, Set<(batch: readonly Sample[]) => void>>();
+  private readonly resetHandlers = new Set<() => void>();
   readonly duration = null;
   position = 0;
   subscribeCount = 0;
@@ -40,6 +41,16 @@ class FakeSource implements TelemetrySource {
     return () => undefined;
   }
 
+  onReset(handler: () => void): Unsubscribe {
+    this.resetHandlers.add(handler);
+    return () => this.resetHandlers.delete(handler);
+  }
+
+  /** Simulates a seek, which is what makes retained history non-contiguous. */
+  reset(): void {
+    for (const handler of this.resetHandlers) handler();
+  }
+
   play(): void {
     // no-op
   }
@@ -63,11 +74,12 @@ interface HarnessProps {
   channelId: string | null;
   onDraw: (buffer: RingBuffer) => void;
   onRender: () => void;
+  redrawKey?: string;
 }
 
-function Harness({ source, channelId, onDraw, onRender }: HarnessProps): ReactElement {
+function Harness({ source, channelId, onDraw, onRender, redrawKey }: HarnessProps): ReactElement {
   onRender();
-  useTelemetryChannel({ source, channelId, capacity: 128, draw: onDraw });
+  useTelemetryChannel({ source, channelId, capacity: 128, draw: onDraw, redrawKey });
   return <div data-testid="harness" />;
 }
 
@@ -122,16 +134,100 @@ describe('useTelemetryChannel', () => {
     expect(onDraw).toHaveBeenCalledTimes(1);
   });
 
-  it('does not draw when nothing has arrived', () => {
-    // An idle channel must not burn a draw every frame.
+  it('paints once on mount, then idles', () => {
+    // The first frame draws so the chart shows its axes and grid rather than a
+    // blank rectangle while waiting for data. After that an idle channel must
+    // not burn a draw every frame.
     const source = new FakeSource();
     const onDraw = vi.fn();
     render(<Harness source={source} channelId="hr" onDraw={onDraw} onRender={vi.fn()} />);
 
     frame();
+    expect(onDraw).toHaveBeenCalledTimes(1);
+
+    frame();
+    frame();
+    expect(onDraw).toHaveBeenCalledTimes(1);
+  });
+
+  it('redraws as the window moves, even with no new samples', () => {
+    // The visible window is anchored to the playback position, so it scrolls
+    // between readings. A 0.02 Hz cuff pressure channel would otherwise freeze
+    // for the fifty seconds between its samples.
+    const source = new FakeSource();
+    const onDraw = vi.fn();
+    render(<Harness source={source} channelId="hr" onDraw={onDraw} onRender={vi.fn()} />);
+    frame();
+    onDraw.mockClear();
+
+    source.position = 12;
     frame();
 
-    expect(onDraw).not.toHaveBeenCalled();
+    expect(onDraw).toHaveBeenCalledTimes(1);
+  });
+
+  it('discards buffered history when the source reports a seek', () => {
+    // Samples buffered before a backward jump are still in the past by
+    // timestamp; keeping them draws a trace that doubles back on itself.
+    const source = new FakeSource();
+    let seen: number[] = [];
+    render(
+      <Harness
+        source={source}
+        channelId="hr"
+        onDraw={(buffer) => {
+          seen = [...buffer.toArrays().times];
+        }}
+        onRender={vi.fn()}
+      />,
+    );
+
+    act(() => {
+      source.emit('hr', [
+        { time: 30, value: 1 },
+        { time: 31, value: 1 },
+      ]);
+    });
+    frame();
+    expect(seen).toEqual([30, 31]);
+
+    act(() => {
+      source.reset();
+    });
+    frame();
+
+    expect(seen).toEqual([]);
+  });
+
+  it('repaints when the canvas is resized', () => {
+    // Setting a canvas width attribute wipes its bitmap, so a resize with no
+    // new data would otherwise leave the trace permanently blank.
+    const source = new FakeSource();
+    const onDraw = vi.fn();
+    const { rerender } = render(
+      <Harness
+        source={source}
+        channelId="hr"
+        onDraw={onDraw}
+        onRender={vi.fn()}
+        redrawKey="400x80"
+      />,
+    );
+    frame();
+    onDraw.mockClear();
+
+    rerender(
+      <Harness
+        source={source}
+        channelId="hr"
+        onDraw={onDraw}
+        onRender={vi.fn()}
+        redrawKey="900x80"
+      />,
+    );
+    frame();
+
+    expect(onDraw).toHaveBeenCalledTimes(1);
   });
 
   it('accumulates samples into the buffer it hands to draw', () => {

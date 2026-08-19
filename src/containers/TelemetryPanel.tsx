@@ -24,6 +24,7 @@ import { StripChart } from '@/charts/StripChart';
 import { useGetTrackIndexQuery } from '@/data/trackIndexApi';
 import {
   caseSelected,
+  playbackPaused,
   playbackToggled,
   positionReported,
   rateSelected,
@@ -95,13 +96,18 @@ export function TelemetryPanel(): ReactElement {
     sourceRef.current = source;
     if (source === null) return;
 
-    const unsubscribe = source.onStatus(setStatus);
+    const unsubscribe = source.onStatus((next) => {
+      setStatus(next);
+      // Reaching the end stops the source's clock, so the store has to follow
+      // or the button keeps offering to pause something that is not running.
+      if (next.state === 'ended') dispatch(playbackPaused());
+    });
     return () => {
       unsubscribe();
       source.close();
       sourceRef.current = null;
     };
-  }, [source]);
+  }, [source, dispatch]);
 
   // Store -> source. The store is authoritative for intent; the source is told.
   useEffect(() => {
@@ -254,7 +260,6 @@ export function TelemetryPanel(): ReactElement {
                     windowSeconds={windowSeconds}
                     width={width}
                     height={TRACE_HEIGHT}
-                    positionSeconds={positionSeconds}
                   />
                 ))}
               </Stack>

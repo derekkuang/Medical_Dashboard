@@ -98,6 +98,13 @@ export class WebSocketSource implements TelemetrySource {
     };
   }
 
+  onReset(_handler: () => void): Unsubscribe {
+    // A live feed has no timeline to jump around, so history never becomes
+    // discontiguous this way. Implemented to satisfy the interface rather than
+    // left to throw.
+    return () => undefined;
+  }
+
   onStatus(onChange: (status: ConnectionStatus) => void): Unsubscribe {
     this.statusListeners.add(onChange);
     onChange(this.status);

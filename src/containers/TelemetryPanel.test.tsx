@@ -158,6 +158,28 @@ describe('TelemetryPanel', () => {
     });
   });
 
+  it('stops playing when the case ends', async () => {
+    // The source stops its own clock at the end; if the store does not follow,
+    // the button keeps offering to pause something that is not running and
+    // pressing play does nothing.
+    stubTelemetry();
+    const { store } = renderWithProviders(<TelemetryPanel />);
+    await screen.findByText(/2 cases carry telemetry/);
+
+    await userEvent.click(screen.getByLabelText('Case'));
+    await userEvent.click(screen.getByRole('option', { name: /#13/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Start replay' }));
+
+    // The stubbed track ends at t=2s, so playback runs past it quickly.
+    await waitFor(
+      () => {
+        expect(store.getState().telemetry.playing).toBe(false);
+      },
+      { timeout: 8000 },
+    );
+    expect(await screen.findByRole('button', { name: 'Start replay' })).toBeInTheDocument();
+  }, 12000);
+
   it('keeps samples out of the store', async () => {
     // The architecture claim, asserted at the panel level: whatever the traces
     // are drawing, none of it is in Redux.

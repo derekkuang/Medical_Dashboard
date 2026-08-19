@@ -8,10 +8,16 @@ export interface UseTelemetryChannelOptions {
   /** Samples retained. Sized from rate × window in the caller. */
   capacity: number;
   /**
-   * Called on an animation frame when new samples have landed, and never
-   * otherwise. Receives the buffer directly so nothing has to be copied.
+   * Called on an animation frame when there is something new to show.
+   * Receives the buffer directly so nothing has to be copied.
    */
   draw: (buffer: RingBuffer) => void;
+  /**
+   * Any value that should force a redraw when it changes — canvas dimensions,
+   * principally. Setting a canvas's width attribute wipes its bitmap, so
+   * without this a resize while paused leaves every trace permanently blank.
+   */
+  redrawKey?: string | number | undefined;
 }
 
 /**
@@ -35,6 +41,7 @@ export function useTelemetryChannel({
   channelId,
   capacity,
   draw,
+  redrawKey,
 }: UseTelemetryChannelOptions): void {
   const bufferRef = useRef<RingBuffer | null>(null);
   const dirtyRef = useRef(false);
@@ -59,10 +66,25 @@ export function useTelemetryChannel({
       dirtyRef.current = true;
     });
 
+    // A seek makes retained history non-contiguous: samples buffered from
+    // before a backward jump are still in the past by timestamp, so keeping
+    // them draws a trace that doubles back on itself.
+    const unsubscribeReset = source.onReset(() => {
+      buffer.clear();
+      dirtyRef.current = true;
+    });
+
     let frame = 0;
+    let lastDrawnPosition = Number.NaN;
+
     const loop = (): void => {
-      if (dirtyRef.current) {
+      // The visible window is anchored to the playback position, so it moves
+      // even when no sample has arrived — a 0.02 Hz channel would otherwise
+      // freeze for the fifty seconds between its readings.
+      const position = source.position;
+      if (dirtyRef.current || position !== lastDrawnPosition) {
         dirtyRef.current = false;
+        lastDrawnPosition = position;
         drawRef.current(buffer);
       }
       frame = requestAnimationFrame(loop);
@@ -71,8 +93,15 @@ export function useTelemetryChannel({
 
     return () => {
       cancelAnimationFrame(frame);
+      unsubscribeReset();
       unsubscribe();
       bufferRef.current = null;
     };
   }, [source, channelId, capacity]);
+
+  // Kept out of the subscription effect deliberately: rebuilding the buffer on
+  // every resize would throw away the history being displayed.
+  useEffect(() => {
+    dirtyRef.current = true;
+  }, [redrawKey]);
 }
