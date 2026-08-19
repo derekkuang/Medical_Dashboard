@@ -68,7 +68,14 @@ export function DashboardGrid({ children }: { children: ReactNode }): ReactEleme
       sx={{
         display: 'grid',
         gap: 3,
-        gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+        // minmax(0, 1fr) at every breakpoint, not just md. A bare `1fr` track
+        // carries an implicit min-width:auto and so cannot shrink below its
+        // content's min-content width, which for a chart whose SVG draws
+        // outside its box is wider than the plot itself. Nothing currently
+        // exceeds it, but the single-column case is the one where a future wide
+        // panel would push the page sideways, and this removes that failure
+        // mode rather than waiting for it.
+        gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'repeat(2, minmax(0, 1fr))' },
         alignItems: 'start',
       }}
     >

@@ -15,7 +15,7 @@ corrections are the most interesting thing in the repository and are documented 
 npm install
 npm run dev            # http://localhost:5173
 
-npm test               # 368 tests
+npm test               # 371 tests
 npm run test:coverage  # thresholds enforced on the logic layers
 npm run lint           # includes the architecture boundary rules
 npm run typecheck
@@ -174,7 +174,7 @@ anaesthesia to incision and transplantation ~70. The data gives 33.9 and 69.7. T
 
 ## Testing
 
-368 tests. Coverage thresholds apply to `transforms/`, `telemetry/`, `data/` and `features/` —
+371 tests. Coverage thresholds apply to `transforms/`, `telemetry/`, `data/` and `features/` —
 the layers that carry logic. Charts get render tests with fixture props; thresholds there would
 reward asserting on SVG internals, which is the brittle test this design exists to avoid.
 

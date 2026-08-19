@@ -83,7 +83,12 @@ function Body({
   );
 
   const yTicks = useMemo(() => linearTicks(y, 5, (v) => `${(v * 100).toFixed(0)}%`), [y]);
-  const xTicks = useMemo(() => bandTicks(x), [x]);
+  const xTicks = useMemo(() => {
+    // Eight bands do not fit on a phone. Roughly 46px is needed per label at
+    // this size, so drop every nth rather than let them overlap into mush.
+    const stride = Math.max(1, Math.ceil(46 / Math.max(1, x.step())));
+    return bandTicks(x).filter((_, i) => i % stride === 0);
+  }, [x]);
 
   const centre = useCallback((label: string): number => (x(label) ?? 0) + x.bandwidth() / 2, [x]);
 

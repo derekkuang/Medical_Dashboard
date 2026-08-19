@@ -22,7 +22,11 @@ export function ChartCard({ title, subtitle, action, children }: ChartCardProps)
   const headingId = useId();
 
   return (
-    <Paper component="section" aria-labelledby={headingId} sx={{ p: 2, height: '100%' }}>
+    <Paper
+      component="section"
+      aria-labelledby={headingId}
+      sx={{ p: 2, height: '100%', minWidth: 0 }}
+    >
       {/* Alignment goes through sx: recent MUI no longer forwards these as
           standalone props, and they leak onto the DOM node if passed directly. */}
       <Stack
