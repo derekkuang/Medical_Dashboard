@@ -20,7 +20,7 @@ const CHART_CHROME = 52;
 export function DepartmentPanel({ allCases, matchedCases }: DepartmentPanelProps): ReactElement {
   const dispatch = useAppDispatch();
   const { department } = useAppSelector(selectFilters);
-  const [containerRef, { width }] = useResizeObserver<HTMLDivElement>();
+  const [containerRef, { width }] = useResizeObserver();
 
   const bars = useMemo(() => departmentBars(allCases, matchedCases), [allCases, matchedCases]);
 

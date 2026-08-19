@@ -18,7 +18,7 @@ export function PhasePanel({ matchedCases }: PhasePanelProps): ReactElement {
   // Local state: choosing which phase to look at does not change the cohort,
   // so it is not part of the shareable filter URL.
   const [phaseKey, setPhaseKey] = useState<PhaseKey>('preIncision');
-  const [containerRef, { width }] = useResizeObserver<HTMLDivElement>();
+  const [containerRef, { width }] = useResizeObserver();
 
   const phase = PHASES.find((p) => p.key === phaseKey) ?? PHASES[0];
 

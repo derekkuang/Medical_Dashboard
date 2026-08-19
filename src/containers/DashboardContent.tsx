@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { useMemo, type ReactElement } from 'react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { useGetCasesQuery } from '@/data/casesApi';
@@ -13,6 +14,7 @@ import { AgeHistogramPanel } from './AgeHistogramPanel';
 import { DepartmentPanel } from './DepartmentPanel';
 import { AlbuminPanel } from './AlbuminPanel';
 import { CohortRadarPanel } from './CohortRadarPanel';
+import { TelemetryPanel } from './TelemetryPanel';
 import { PhasePanel } from './PhasePanel';
 import { RiskPanel } from './RiskPanel';
 import { FilterToolbar } from './FilterToolbar';
@@ -65,6 +67,11 @@ export function DashboardContent(): ReactElement {
           <AlbuminPanel matchedCases={matched} />
           <PhasePanel matchedCases={matched} />
           <CohortRadarPanel allCases={cases} />
+          {/* Six traces stacked need the full width; at one column this is a
+              no-op. */}
+          <Box sx={{ gridColumn: { md: '1 / -1' } }}>
+            <TelemetryPanel />
+          </Box>
         </DashboardGrid>
       )}
     </>

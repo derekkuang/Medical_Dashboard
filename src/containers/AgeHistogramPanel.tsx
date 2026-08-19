@@ -31,7 +31,7 @@ export function AgeHistogramPanel({
 
   const dispatch = useAppDispatch();
   const { ageRange } = useAppSelector(selectFilters);
-  const [containerRef, { width }] = useResizeObserver<HTMLDivElement>();
+  const [containerRef, { width }] = useResizeObserver();
 
   const domain = useMemo(() => ageExtent(allCases), [allCases]);
   const bins = useMemo(

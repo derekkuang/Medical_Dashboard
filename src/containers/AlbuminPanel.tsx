@@ -16,7 +16,7 @@ const CHART_HEIGHT = 280;
 const ASSERTED_THRESHOLD = 3.5;
 
 export function AlbuminPanel({ matchedCases }: AlbuminPanelProps): ReactElement {
-  const [containerRef, { width }] = useResizeObserver<HTMLDivElement>();
+  const [containerRef, { width }] = useResizeObserver();
 
   const bins = useMemo(() => albuminIcuRisk(matchedCases), [matchedCases]);
   const step = useMemo(() => largestStep(bins), [bins]);

@@ -1,6 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { casesApi } from '@/data/casesApi';
+import { trackIndexApi } from '@/data/trackIndexApi';
 import { filtersReducer } from '@/features/filters/filtersSlice';
+import { telemetryReducer } from '@/features/telemetry/telemetrySlice';
 
 /**
  * The control plane.
@@ -21,7 +23,9 @@ export const makeStore = () =>
   configureStore({
     reducer: {
       filters: filtersReducer,
+      telemetry: telemetryReducer,
       [casesApi.reducerPath]: casesApi.reducer,
+      [trackIndexApi.reducerPath]: trackIndexApi.reducer,
     },
     middleware: (getDefault) =>
       getDefault({
@@ -33,7 +37,7 @@ export const makeStore = () =>
         // rather than the checks being switched off wholesale.
         serializableCheck: { ignoredPaths: [`${casesApi.reducerPath}.queries`] },
         immutableCheck: { ignoredPaths: [`${casesApi.reducerPath}.queries`] },
-      }).concat(casesApi.middleware),
+      }).concat(casesApi.middleware, trackIndexApi.middleware),
   });
 
 export const store = makeStore();

@@ -18,7 +18,7 @@ export function RiskPanel({ matchedCases }: RiskPanelProps): ReactElement {
   // rest of the dashboard by, so it is not part of the shareable filter URL.
   const [selected, setSelected] = useState<RiskFactorKey[]>([]);
 
-  const [containerRef, { width }] = useResizeObserver<HTMLDivElement>();
+  const [containerRef, { width }] = useResizeObserver();
 
   const profile = useMemo(() => riskProfile(matchedCases, selected), [matchedCases, selected]);
 

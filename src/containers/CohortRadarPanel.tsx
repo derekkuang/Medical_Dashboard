@@ -83,7 +83,7 @@ export function CohortRadarPanel({ allCases }: CohortRadarPanelProps): ReactElem
   });
   const [active, setActive] = useState<ReadonlySet<MatchCriterion>>(new Set(MATCH_CRITERIA));
 
-  const [containerRef, { width }] = useResizeObserver<HTMLDivElement>();
+  const [containerRef, { width }] = useResizeObserver();
 
   const summary = useMemo(
     () => summariseCohort(matchCohort(allCases, profile, active), allCases),
