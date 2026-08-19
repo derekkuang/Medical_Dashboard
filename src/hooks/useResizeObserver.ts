@@ -33,6 +33,19 @@ export function useResizeObserver(): [(node: Element | null) => void, Size] {
 
     if (node === null) return;
 
+    // Measure synchronously on attach, before observing.
+    //
+    // ResizeObserver only reports *changes*, and whether it delivers an initial
+    // observation at all — and when — is not something to depend on. Relying on
+    // it left every chart at width 0 forever in a real browser while passing in
+    // tests, because the test stub fires synchronously and a browser does not.
+    // The element is already laid out by the time React attaches a ref, so the
+    // first size can simply be read.
+    const initial = node.getBoundingClientRect();
+    if (initial.width > 0 || initial.height > 0) {
+      setSize({ width: initial.width, height: initial.height });
+    }
+
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (entry === undefined) return;
