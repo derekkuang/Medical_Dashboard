@@ -34,6 +34,24 @@ docker run --rm -p 8080:8080 vitals-unveiled   # http://localhost:8080
 The image is a multi-stage build — `node:22-slim` to compile, `nginx:1.27-alpine` to serve —
 running unprivileged as uid 101, 84 MB final.
 
+## Deployment
+
+Two paths, kept deliberately consistent with each other.
+
+**Vercel** hosts the live build. Push to `main`, it builds and deploys; every branch gets a
+preview URL. `vercel.json` restates the caching policy from `nginx.conf` — a year on
+content-hashed assets, an hour on `cases.csv` and `track-index.json`, which are not hashed —
+so the two hosts behave the same. Compression is Vercel's own, which is why there is no gzip
+configuration to mirror.
+
+Its build also does something CI currently cannot: it compiles the project on a clean machine,
+with no `node_modules`, no cached Vite state and nothing present locally but uncommitted. A
+broken build fails the deploy.
+
+**The container** is the portable artefact and is what CI publishes. Anywhere that runs a
+Dockerfile — Fly.io, Render, Cloud Run — will serve the app through the nginx configuration in
+this repository rather than a platform's static host.
+
 ## Stack
 
 React 18 · TypeScript (strict, plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`) ·
