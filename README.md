@@ -1,5 +1,7 @@
 # Vitals Unveiled
 
+[![CI](https://github.com/derekkuang/Medical_Dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/derekkuang/Medical_Dashboard/actions/workflows/ci.yml)
+
 An analytics dashboard over the [VitalDB](https://vitaldb.net) surgical dataset from Seoul
 National University Hospital — 6,388 anonymised cases — built as a ground-up rebuild of a
 university data-visualisation project ([chewycrunch/final-proj-dsc106](https://github.com/chewycrunch/final-proj-dsc106),

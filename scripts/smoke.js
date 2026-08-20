@@ -49,30 +49,61 @@ async function waitForTarget() {
   throw new Error('Chrome never exposed a debuggable page');
 }
 
-function makeEvaluator(socket) {
+/**
+ * Minimal DevTools Protocol client: request/response by id, plus events.
+ *
+ * Commands and events share one socket, so both need handling — waiting for
+ * page load means listening for an event that carries no id at all.
+ */
+function makeClient(socket) {
   let nextId = 1;
-  return (expression) =>
+  const pending = new Map();
+  const eventHandlers = new Map();
+
+  socket.addEventListener('message', (event) => {
+    const message = JSON.parse(event.data);
+
+    if (message.id !== undefined) {
+      const entry = pending.get(message.id);
+      if (!entry) return;
+      pending.delete(message.id);
+      if (message.error) entry.reject(new Error(message.error.message ?? 'CDP error'));
+      else entry.resolve(message.result);
+      return;
+    }
+
+    const handler = eventHandlers.get(message.method);
+    if (handler) handler(message.params);
+  });
+
+  const send = (method, params = {}) =>
     new Promise((resolve, reject) => {
       const id = nextId++;
-      const onMessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.id !== id) return;
-        socket.removeEventListener('message', onMessage);
-        if (message.result?.exceptionDetails) {
-          reject(new Error(message.result.exceptionDetails.text ?? 'Page threw'));
-          return;
-        }
-        resolve(message.result?.result?.value);
-      };
-      socket.addEventListener('message', onMessage);
-      socket.send(
-        JSON.stringify({
-          id,
-          method: 'Runtime.evaluate',
-          params: { expression, awaitPromise: true, returnByValue: true },
-        }),
-      );
+      pending.set(id, { resolve, reject });
+      socket.send(JSON.stringify({ id, method, params }));
     });
+
+  const once = (method) =>
+    new Promise((resolve) => {
+      eventHandlers.set(method, (params) => {
+        eventHandlers.delete(method);
+        resolve(params);
+      });
+    });
+
+  const evaluate = async (expression) => {
+    const result = await send('Runtime.evaluate', {
+      expression,
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    if (result?.exceptionDetails) {
+      throw new Error(result.exceptionDetails.text ?? 'Page threw');
+    }
+    return result?.result?.value;
+  };
+
+  return { send, once, evaluate };
 }
 
 /** Shared page-side helpers, prepended to each scenario. */
@@ -183,6 +214,11 @@ const TELEMETRY_SCENARIO = `(async () => {
 })()`;
 
 async function main() {
+  // Launched on about:blank and navigated explicitly afterwards. Passing the
+  // URL here instead races the debugger connection: on a slower machine the
+  // first evaluation lands on about:blank, whose execution context is then
+  // destroyed by the navigation, and the call resolves with nothing. That is
+  // exactly how this failed in CI while passing locally.
   const chrome = spawn(CHROME, [
     '--headless',
     '--disable-gpu',
@@ -192,7 +228,7 @@ async function main() {
     '--disable-dev-shm-usage',
     `--remote-debugging-port=${String(PORT)}`,
     '--window-size=1400,1600',
-    APP_URL,
+    'about:blank',
   ]);
 
   let socket;
@@ -208,8 +244,18 @@ async function main() {
       });
     });
 
-    const evaluate = makeEvaluator(socket);
+    const { send, once, evaluate } = makeClient(socket);
 
+    await send('Page.enable');
+    await send('Runtime.enable');
+
+    const loaded = once('Page.loadEventFired');
+    await send('Page.navigate', { url: APP_URL });
+    await loaded;
+
+    // Load fires when the document and its subresources are done; React has
+    // still to mount. The scenarios poll for what they need, so this only has
+    // to guarantee a live execution context on the right page.
     const render = await evaluate(RENDER_SCENARIO);
     console.log('render:', JSON.stringify(render));
     if (!render?.ok) {
