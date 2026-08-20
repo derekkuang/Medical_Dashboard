@@ -260,10 +260,13 @@ visitor. Both decisions, and the measurements behind them, are in
 Complete: data layer, state and URL-synced filters, six analytical panels, telemetry replay,
 accessibility and responsive passes.
 
-**CI has not yet executed** — the repository's GitHub Actions are blocked by an account billing
-issue, not by the code. Every commit has been verified locally against the exact CI sequence
-(`format:check → lint → typecheck → test:coverage → build`), and the container has been built and
-exercised, but nothing has been checked on a clean machine.
+CI runs three jobs on every push: `format:check → lint → typecheck → test:coverage → build`, the
+browser smoke test against the production build, and the container image build and publish.
+
+The smoke job is what makes the browser claims checkable rather than asserted. On a clean runner
+it reports six charts drawing marks and a case replaying with live readouts, which is the same
+evidence a person would gather by opening the page — and it is the class of failure the unit
+suite is structurally unable to see.
 
 ## Licence
 
