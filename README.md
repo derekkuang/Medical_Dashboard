@@ -19,6 +19,9 @@ npm test               # 371 tests
 npm run test:coverage  # thresholds enforced on the logic layers
 npm run lint           # includes the architecture boundary rules
 npm run typecheck
+
+npm run build && npm run preview   # then, in another shell:
+npm run smoke                      # drives a real browser; see below
 ```
 
 Container, which is what CI publishes:
@@ -42,7 +45,9 @@ deletes it.
 
 ## The D3/React boundary
 
-This is the decision the whole codebase is arranged around.
+This is the decision the whole codebase is arranged around; the full record,
+including the alternatives rejected, is in
+[docs/decisions/0002-d3-react-boundary.md](docs/decisions/0002-d3-react-boundary.md).
 
 **React owns the DOM. D3 owns the maths. Except where D3 owns a _gesture_ — and there it gets a
 leaf node it exclusively controls.**
@@ -177,6 +182,15 @@ anaesthesia to incision and transplantation ~70. The data gives 33.9 and 69.7. T
 371 tests. Coverage thresholds apply to `transforms/`, `telemetry/`, `data/` and `features/` —
 the layers that carry logic. Charts get render tests with fixture props; thresholds there would
 reward asserting on SVG internals, which is the brittle test this design exists to avoid.
+
+There is also a browser smoke test — `npm run smoke` — because the unit suite
+cannot establish that this application works. jsdom has no canvas, no layout and
+no real ResizeObserver, and a stub that behaved unlike a browser once let a bug
+ship where every chart rendered blank while 368 tests passed. It drives a real
+Chrome over the DevTools Protocol, with no added dependencies, and asserts that
+pixels were actually painted. CI blocks on the half that needs nothing but this
+app, and treats the half that calls the live VitalDB API as advisory, since an
+outage there is not a defect here.
 
 Several suites assert against the **published dataset**, not fixtures: 6,388 rows, the department
 split, 57 in-hospital deaths, exact missingness counts. If the upstream data is ever replaced,

@@ -58,6 +58,58 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+  smoke:
+    name: Browser smoke test
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Against the production build rather than the dev server: the artefact
+      # that ships is the one worth testing, and Vite's dev pipeline is not it.
+      - name: Build
+        run: npm run build
+
+      - name: Serve the build
+        run: npm run preview -- --port 4173 --strictPort &
+
+      - name: Wait for the server
+        run: |
+          for _ in $(seq 1 30); do
+            curl -sf http://localhost:4173/ >/dev/null && exit 0
+            sleep 1
+          done
+          echo "preview server never came up" >&2
+          exit 1
+
+      # Blocking. Needs nothing but the app and its own data file, and it is
+      # what would have caught the bug where every chart rendered blank while
+      # the whole unit suite passed.
+      - name: Charts render
+        run: npm run smoke:render
+        env:
+          SMOKE_URL: http://localhost:4173/
+          CHROME_PATH: google-chrome
+
+      # Advisory. This one calls the live VitalDB API, so a failure here may be
+      # an upstream outage rather than a defect in this repository — which is
+      # not something a build should be gated on. It still reports loudly.
+      - name: Telemetry replays (advisory)
+        continue-on-error: true
+        run: npm run smoke
+        env:
+          SMOKE_URL: http://localhost:4173/
+          CHROME_PATH: google-chrome
+
   image:
     name: Container image
     needs: verify

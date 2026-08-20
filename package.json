@@ -18,7 +18,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "smoke": "node scripts/smoke-telemetry.js"
+    "smoke": "node scripts/smoke.js",
+    "smoke:render": "SMOKE_SKIP_TELEMETRY=1 node scripts/smoke.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
