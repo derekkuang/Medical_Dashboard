@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/derekkuang/Medical_Dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/derekkuang/Medical_Dashboard/actions/workflows/ci.yml)
 
+**Live: [vitals-unveiled-2-0.vercel.app](https://vitals-unveiled-2-0.vercel.app/)**
+
 An analytics dashboard over the [VitalDB](https://vitaldb.net) surgical dataset from Seoul
 National University Hospital — 6,388 anonymised cases — built as a ground-up rebuild of a
 university data-visualisation project ([chewycrunch/final-proj-dsc106](https://github.com/chewycrunch/final-proj-dsc106),
@@ -40,7 +42,8 @@ running unprivileged as uid 101, 84 MB final.
 
 Two paths, kept deliberately consistent with each other.
 
-**Vercel** hosts the live build. Push to `main`, it builds and deploys; every branch gets a
+**Vercel** hosts the live build at
+[vitals-unveiled-2-0.vercel.app](https://vitals-unveiled-2-0.vercel.app/). Push to `main`, it builds and deploys; every branch gets a
 preview URL. `vercel.json` restates the caching policy from `nginx.conf` — a year on
 content-hashed assets, an hour on `cases.csv` and `track-index.json`, which are not hashed —
 so the two hosts behave the same. Compression is Vercel's own, which is why there is no gzip
@@ -270,4 +273,6 @@ suite is structurally unable to see.
 
 ## Licence
 
-Code is MIT. The VitalDB dataset is subject to its own [terms of use](https://vitaldb.net/dataset/).
+Code is MIT — see [LICENSE](LICENSE). The VitalDB dataset is published by Seoul National
+University Hospital under its own [terms of use](https://vitaldb.net/dataset/) and is not
+redistributed here beyond the case table used for offline development.
